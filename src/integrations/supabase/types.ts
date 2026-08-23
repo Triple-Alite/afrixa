@@ -14,7 +14,435 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assessments: {
+        Row: {
+          created_at: string
+          id: string
+          level: string
+          score: number
+          skill: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          level?: string
+          score?: number
+          skill: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level?: string
+          score?: number
+          skill?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          participant_a: string
+          participant_b: string
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          participant_a: string
+          participant_b: string
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          participant_a?: string
+          participant_b?: string
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      escrows: {
+        Row: {
+          amount: number
+          client_id: string | null
+          company: string | null
+          created_at: string
+          currency: string
+          delivered_at: string | null
+          funded_at: string | null
+          id: string
+          local_amount: number | null
+          local_currency: string | null
+          opportunity_id: string | null
+          released_at: string | null
+          started_at: string | null
+          status: string
+          talent_id: string | null
+          title: string
+        }
+        Insert: {
+          amount?: number
+          client_id?: string | null
+          company?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          funded_at?: string | null
+          id?: string
+          local_amount?: number | null
+          local_currency?: string | null
+          opportunity_id?: string | null
+          released_at?: string | null
+          started_at?: string | null
+          status?: string
+          talent_id?: string | null
+          title?: string
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          company?: string | null
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          funded_at?: string | null
+          id?: string
+          local_amount?: number | null
+          local_currency?: string | null
+          opportunity_id?: string | null
+          released_at?: string | null
+          started_at?: string | null
+          status?: string
+          talent_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrows_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunities: {
+        Row: {
+          budget_max: number | null
+          budget_min: number | null
+          category: string
+          client_id: string | null
+          company: string
+          country: string | null
+          created_at: string
+          currency: string
+          deadline: string | null
+          delivery_days: number | null
+          description: string | null
+          escrow_funded: boolean
+          experience_level: string | null
+          id: string
+          image_url: string | null
+          job_type: string | null
+          price_from: number | null
+          rating: number | null
+          reviews_count: number
+          skills: string[]
+          title: string
+          work_mode: string | null
+        }
+        Insert: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category?: string
+          client_id?: string | null
+          company?: string
+          country?: string | null
+          created_at?: string
+          currency?: string
+          deadline?: string | null
+          delivery_days?: number | null
+          description?: string | null
+          escrow_funded?: boolean
+          experience_level?: string | null
+          id?: string
+          image_url?: string | null
+          job_type?: string | null
+          price_from?: number | null
+          rating?: number | null
+          reviews_count?: number
+          skills?: string[]
+          title: string
+          work_mode?: string | null
+        }
+        Update: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category?: string
+          client_id?: string | null
+          company?: string
+          country?: string | null
+          created_at?: string
+          currency?: string
+          deadline?: string | null
+          delivery_days?: number | null
+          description?: string | null
+          escrow_funded?: boolean
+          experience_level?: string | null
+          id?: string
+          image_url?: string | null
+          job_type?: string | null
+          price_from?: number | null
+          rating?: number | null
+          reviews_count?: number
+          skills?: string[]
+          title?: string
+          work_mode?: string | null
+        }
+        Relationships: []
+      }
+      payout_methods: {
+        Row: {
+          account_name: string | null
+          account_number: string | null
+          bank_name: string | null
+          country: string | null
+          created_at: string
+          id: string
+          method: string
+          user_id: string
+        }
+        Insert: {
+          account_name?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          method?: string
+          user_id: string
+        }
+        Update: {
+          account_name?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          method?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      portfolio_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          link_url: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          business_name: string | null
+          client_type: string | null
+          country: string | null
+          created_at: string
+          full_name: string
+          headline: string | null
+          id: string
+          languages: string[]
+          onboarding_complete: boolean
+          primary_skill: string | null
+          profile_strength: number
+          role: Database["public"]["Enums"]["app_user_role"] | null
+          total_earned: number
+          updated_at: string
+          verified: boolean
+          years_experience: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          business_name?: string | null
+          client_type?: string | null
+          country?: string | null
+          created_at?: string
+          full_name?: string
+          headline?: string | null
+          id: string
+          languages?: string[]
+          onboarding_complete?: boolean
+          primary_skill?: string | null
+          profile_strength?: number
+          role?: Database["public"]["Enums"]["app_user_role"] | null
+          total_earned?: number
+          updated_at?: string
+          verified?: boolean
+          years_experience?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          business_name?: string | null
+          client_type?: string | null
+          country?: string | null
+          created_at?: string
+          full_name?: string
+          headline?: string | null
+          id?: string
+          languages?: string[]
+          onboarding_complete?: boolean
+          primary_skill?: string | null
+          profile_strength?: number
+          role?: Database["public"]["Enums"]["app_user_role"] | null
+          total_earned?: number
+          updated_at?: string
+          verified?: boolean
+          years_experience?: string | null
+        }
+        Relationships: []
+      }
+      proposals: {
+        Row: {
+          bid_amount: number | null
+          cover_letter: string
+          created_at: string
+          currency: string
+          delivery_days: number | null
+          id: string
+          opportunity_id: string
+          status: string
+          talent_id: string
+        }
+        Insert: {
+          bid_amount?: number | null
+          cover_letter?: string
+          created_at?: string
+          currency?: string
+          delivery_days?: number | null
+          id?: string
+          opportunity_id: string
+          status?: string
+          talent_id: string
+        }
+        Update: {
+          bid_amount?: number | null
+          cover_letter?: string
+          created_at?: string
+          currency?: string
+          delivery_days?: number | null
+          id?: string
+          opportunity_id?: string
+          status?: string
+          talent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +451,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_user_role: "talent" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +578,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_user_role: ["talent", "client"],
+    },
   },
 } as const
