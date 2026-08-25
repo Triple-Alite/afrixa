@@ -80,7 +80,7 @@ function ProfilePage() {
               {initials(profile?.full_name)}
             </span>
             <div className="min-w-0 flex-1">
-              <h1 className="truncate text-xl font-bold">{profile?.full_name ?? "Afrixa member"}</h1>
+              <h2 className="truncate text-xl font-bold">{profile?.full_name ?? "Afrixa member"}</h2>
               <p className="mt-1 text-sm text-primary-foreground/75">
                 {profile?.headline ?? profile?.business_name ?? "Ready for verified work"}
               </p>

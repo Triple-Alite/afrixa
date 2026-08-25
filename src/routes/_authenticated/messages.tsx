@@ -71,9 +71,9 @@ function MessagesPage() {
                 {initials(conversation.subject)}
               </span>
               <div className="min-w-0 flex-1">
-                <h1 className="truncate text-sm font-semibold">
+                <h2 className="truncate text-sm font-semibold">
                   {conversation.subject ?? "Afrixa conversation"}
-                </h1>
+                </h2>
                 <p className="truncate text-xs text-muted-foreground">
                   Last active {new Date(conversation.last_message_at).toLocaleDateString()}
                 </p>
@@ -83,7 +83,7 @@ function MessagesPage() {
         ) : (
           <section className="rounded-2xl border border-dashed border-border p-8 text-center">
             <ChatCircleText size={32} className="mx-auto text-secondary" />
-            <h1 className="mt-3 text-base font-semibold">No conversations yet</h1>
+            <h2 className="mt-3 text-base font-semibold">No conversations yet</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Start from an opportunity detail page when you're ready to speak with a client.
             </p>

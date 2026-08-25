@@ -90,7 +90,7 @@ function WalletPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-primary-foreground/70">Protected balance</p>
-              <h1 className="mt-1 text-3xl font-bold">{money(balance)}</h1>
+              <p className="mt-1 text-3xl font-bold">{money(balance)}</p>
             </div>
             <span className="flex size-12 items-center justify-center rounded-2xl bg-white/15">
               <Wallet size={24} weight="bold" />

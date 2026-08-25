@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CurrencyDollar, Timer, Toolbox } from "@phosphor-icons/react";
@@ -172,7 +173,7 @@ function GigsPage() {
   );
 }
 
-function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function Stat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-3 shadow-card">
       <span className="text-secondary">{icon}</span>

@@ -75,9 +75,9 @@ function AssessmentPage() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-xs text-primary-foreground/70">Progress</p>
-              <h1 className="mt-1 text-2xl font-bold">
+              <p className="mt-1 text-2xl font-bold">
                 {answered}/{ASSESSMENT_QUESTIONS.length} answered
-              </h1>
+              </p>
             </div>
             <span className="flex size-12 items-center justify-center rounded-2xl bg-white/15">
               <Trophy size={24} weight="bold" />
