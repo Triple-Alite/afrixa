@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, ShieldCheck, Star, Timer } from "@phosphor-icons/react";
+import type { ReactNode } from "react";
 
 import { budgetLabel, initials, timeLeft, type Opportunity } from "@/lib/afrixa";
 
@@ -11,7 +12,7 @@ export function EscrowBadge() {
   );
 }
 
-export function SkillChip({ children }: { children: React.ReactNode }) {
+export function SkillChip({ children }: { children: ReactNode }) {
   return (
     <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
       {children}
