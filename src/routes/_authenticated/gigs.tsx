@@ -43,7 +43,7 @@ export const Route = createFileRoute("/_authenticated/gigs")({
 
 function GigsPage() {
   const { user, profile } = useAuth();
-  const navigate = useNavigate({ from: "/_authenticated/gigs" });
+  const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -59,22 +59,23 @@ function GigsPage() {
       if (!title.trim() || !description.trim() || !skill || !amount || !days) {
         throw new Error("Add a title, brief, skill, price and delivery time");
       }
+      const opportunity = {
+        title: title.trim(),
+        description: description.trim(),
+        category: "gig",
+        company: profile?.business_name ?? profile?.full_name ?? "Afrixa client",
+        client_id: user.id,
+        country: profile?.country ?? null,
+        currency: "USD",
+        price_from: amount,
+        delivery_days: days,
+        escrow_funded: true,
+        skills: [skill],
+        work_mode: "Remote",
+      };
       const { data, error } = await supabase
         .from("opportunities")
-        .insert({
-          title: title.trim(),
-          description: description.trim(),
-          category: "gig",
-          company: profile?.business_name ?? profile?.full_name ?? "Afrixa client",
-          client_id: user.id,
-          country: profile?.country,
-          currency: "USD",
-          price_from: amount,
-          delivery_days: days,
-          escrow_funded: true,
-          skills: [skill],
-          work_mode: "Remote",
-        })
+        .insert(opportunity)
         .select("id")
         .single();
       if (error) throw error;

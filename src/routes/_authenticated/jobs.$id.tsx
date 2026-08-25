@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/jobs/$id")({
 function JobDetailPage() {
   const { id } = Route.useParams();
   const { user } = useAuth();
-  const navigate = useNavigate({ from: "/_authenticated/jobs/$id" });
+  const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [cover, setCover] = useState("");

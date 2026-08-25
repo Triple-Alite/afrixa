@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { Briefcase, UserFocus } from "@phosphor-icons/react";
 
@@ -335,7 +336,7 @@ function RoleCard({
   onClick: () => void;
   title: string;
   description: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
   return (
     <button

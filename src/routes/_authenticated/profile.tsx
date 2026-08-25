@@ -62,6 +62,8 @@ function ProfilePage() {
     },
   });
 
+  const latestAssessment = assessments[0];
+
   return (
     <AppShell>
       <ScreenHeader
@@ -113,7 +115,9 @@ function ProfilePage() {
             <div>
               <h2 className="text-base font-semibold">Skill assessment</h2>
               <p className="mt-1 text-xs text-muted-foreground">
-                {assessments.length ? `${assessments[0].level} · ${assessments[0].score}%` : "Earn a visible skills badge"}
+                {latestAssessment
+                  ? `${latestAssessment.level} · ${latestAssessment.score}%`
+                  : "Earn a visible skills badge"}
               </p>
             </div>
             <Link
