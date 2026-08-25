@@ -29,10 +29,14 @@ const CATEGORIES = [
 ];
 
 export const Route = createFileRoute("/_authenticated/explore")({
-  validateSearch: (search: Record<string, unknown>): Search => ({
-    category: typeof search.category === "string" ? search.category : undefined,
-    q: typeof search.q === "string" ? search.q : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): Search => {
+    const parsed: Search = {};
+    const category = search["category"];
+    const q = search["q"];
+    if (typeof category === "string") parsed.category = category;
+    if (typeof q === "string") parsed.q = q;
+    return parsed;
+  },
   head: () => ({
     meta: [
       { title: "Explore opportunities on Afrixa" },
@@ -128,7 +132,8 @@ function ExplorePage() {
               type="button"
               onClick={() =>
                 navigate({
-                  search: { category: item.key === "all" ? undefined : item.key },
+                  to: ".",
+                  search: item.key === "all" ? {} : { category: item.key },
                 })
               }
               className={cn(

@@ -36,7 +36,7 @@ export const Route = createFileRoute("/_authenticated/jobs/$id")({
 function JobDetailPage() {
   const { id } = Route.useParams();
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [cover, setCover] = useState("");
@@ -60,11 +60,12 @@ function JobDetailPage() {
     queryKey: ["proposal", id, user?.id],
     enabled: Boolean(user?.id),
     queryFn: async () => {
+      if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("proposals")
         .select("id,status")
         .eq("opportunity_id", id)
-        .eq("talent_id", user!.id)
+        .eq("talent_id", user.id)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -113,7 +114,8 @@ function JobDetailPage() {
       if (error) throw error;
       return created.id;
     },
-    onSuccess: (conversationId) => navigate({ to: "/messages/$id", params: { id: conversationId } }),
+    onSuccess: (conversationId) =>
+      navigate({ to: "/messages/$id", params: { id: conversationId } }),
     onError: (error) =>
       toast.error(error instanceof Error ? error.message : "Could not open chat"),
   });
