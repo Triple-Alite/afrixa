@@ -195,3 +195,43 @@ function WalletPage() {
     </AppShell>
   );
 }
+function EscrowActions({
+  escrow,
+  userId,
+  busy,
+  onAction,
+}: {
+  escrow: Escrow;
+  userId: string | undefined;
+  busy: boolean;
+  onAction: (action: "start" | "deliver" | "release") => void;
+}) {
+  if (!userId) return null;
+  const isTalent = escrow.talent_id === userId;
+  const isClient = escrow.client_id === userId;
+
+  const actions: { label: string; action: "start" | "deliver" | "release" }[] = [];
+  if (isTalent && escrow.status === "funded") actions.push({ label: "Start work", action: "start" });
+  if (isTalent && (escrow.status === "funded" || escrow.status === "in_progress")) {
+    actions.push({ label: "Mark delivered", action: "deliver" });
+  }
+  if (isClient && escrow.status === "delivered") actions.push({ label: "Release payment", action: "release" });
+
+  if (!actions.length) return null;
+
+  return (
+    <div className="mt-4 flex gap-2">
+      {actions.map((item) => (
+        <Button
+          key={item.action}
+          className="h-10 flex-1"
+          variant={item.action === "release" ? "default" : "outline"}
+          disabled={busy}
+          onClick={() => onAction(item.action)}
+        >
+          {item.label}
+        </Button>
+      ))}
+    </div>
+  );
+}
