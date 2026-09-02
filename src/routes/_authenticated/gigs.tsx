@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -7,8 +7,9 @@ import { CurrencyDollar, Timer, Toolbox } from "@phosphor-icons/react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
+import { GigCard } from "@/components/afrixa/OpportunityCard";
 import { useAuth } from "@/hooks/useAuth";
-import { SKILLS } from "@/lib/afrixa";
+import { SKILLS, type Opportunity } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +44,63 @@ export const Route = createFileRoute("/_authenticated/gigs")({
 
 function GigsPage() {
   const { user, profile } = useAuth();
+  const isClient = profile?.role === "client";
+
+  return (
+    <AppShell>
+      {isClient ? (
+        <PostGigForm user={user} profile={profile} />
+      ) : (
+        <TalentGigsFeed />
+      )}
+    </AppShell>
+  );
+}
+
+function TalentGigsFeed() {
+  const { data: gigs = [], isLoading } = useQuery({
+    queryKey: ["opportunities", "gigs-feed"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("opportunities")
+        .select("*")
+        .eq("category", "gig")
+        .order("created_at", { ascending: false })
+        .limit(30);
+      if (error) throw error;
+      return (data ?? []) as Opportunity[];
+    },
+  });
+
+  return (
+    <>
+      <ScreenHeader title="Gigs" subtitle="Paid gigs you can apply for today" />
+      <main className="space-y-3 px-4">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Loading gigs…</p>
+        ) : gigs.length ? (
+          gigs.map((gig) => <GigCard key={gig.id} opportunity={gig} />)
+        ) : (
+          <section className="rounded-2xl border border-dashed border-border p-8 text-center">
+            <Toolbox size={32} className="mx-auto text-secondary" />
+            <h2 className="mt-3 text-base font-semibold">No gigs yet</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Check back soon — new client gigs land here as they're published.
+            </p>
+          </section>
+        )}
+      </main>
+    </>
+  );
+}
+
+function PostGigForm({
+  user,
+  profile,
+}: {
+  user: ReturnType<typeof useAuth>["user"];
+  profile: ReturnType<typeof useAuth>["profile"];
+}) {
   const navigate = Route.useNavigate();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
@@ -91,7 +149,7 @@ function GigsPage() {
   });
 
   return (
-    <AppShell>
+    <>
       <ScreenHeader title="Post a gig" subtitle="Scope the work and protect payment" />
       <main className="space-y-5 px-4">
         <section className="grid grid-cols-3 gap-2">
@@ -170,7 +228,7 @@ function GigsPage() {
           </Button>
         </section>
       </main>
-    </AppShell>
+    </>
   );
 }
 
