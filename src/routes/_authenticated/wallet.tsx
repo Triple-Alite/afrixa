@@ -86,7 +86,21 @@ function WalletPage() {
     },
   });
 
+  const queryClient = useQueryClient();
+  const advance = useServerFn(advanceEscrow);
+  const escrowMutation = useMutation({
+    mutationFn: (input: { escrowId: string; action: "start" | "deliver" | "release" }) => advance({ data: input }),
+    onSuccess: async () => {
+      toast.success("Escrow updated");
+      await queryClient.invalidateQueries({ queryKey: ["wallet-escrows", user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["transactions", user?.id] });
+    },
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Could not update this escrow"),
+  });
+
   const balance = escrows.reduce((total: number, item: Escrow) => total + Number(item.amount), 0);
+
 
   return (
     <AppShell>
