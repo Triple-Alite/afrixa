@@ -20,6 +20,7 @@ import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedTalentRouteImport } from './routes/_authenticated/talent'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
@@ -79,6 +80,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTalentRoute = AuthenticatedTalentRouteImport.update({
+  id: '/talent',
+  path: '/talent',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/talent': typeof AuthenticatedTalentRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/talent': typeof AuthenticatedTalentRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/talent': typeof AuthenticatedTalentRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/onboarding'
     | '/profile'
+    | '/talent'
     | '/wallet'
     | '/jobs/$id'
     | '/messages/$id'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/onboarding'
     | '/profile'
+    | '/talent'
     | '/wallet'
     | '/jobs/$id'
     | '/messages/$id'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
+    | '/_authenticated/talent'
     | '/_authenticated/wallet'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/messages/$id'
@@ -276,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/talent': {
+      id: '/_authenticated/talent'
+      path: '/talent'
+      fullPath: '/talent'
+      preLoaderRoute: typeof AuthenticatedTalentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/wallet': {
       id: '/_authenticated/wallet'
       path: '/wallet'
@@ -322,6 +341,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedTalentRoute: typeof AuthenticatedTalentRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
 }
@@ -335,6 +355,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedTalentRoute: AuthenticatedTalentRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
 }
