@@ -158,6 +158,13 @@ function WalletPage() {
                   <p className="mt-3 inline-flex items-center gap-1 rounded-full bg-secondary/10 px-2 py-1 text-[11px] font-semibold text-secondary">
                     <ShieldCheck size={13} weight="fill" /> {escrow.status.replaceAll("_", " ")}
                   </p>
+                  <EscrowActions
+                    escrow={escrow}
+                    userId={user?.id}
+                    busy={escrowMutation.isPending}
+                    onAction={(action) => escrowMutation.mutate({ escrowId: escrow.id, action })}
+                  />
+
                 </article>
               ))
             ) : (
