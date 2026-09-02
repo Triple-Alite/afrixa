@@ -80,7 +80,9 @@ export type Database = {
           id: string
           local_amount: number | null
           local_currency: string | null
+          note: string | null
           opportunity_id: string | null
+          proposal_id: string | null
           released_at: string | null
           started_at: string | null
           status: string
@@ -98,7 +100,9 @@ export type Database = {
           id?: string
           local_amount?: number | null
           local_currency?: string | null
+          note?: string | null
           opportunity_id?: string | null
+          proposal_id?: string | null
           released_at?: string | null
           started_at?: string | null
           status?: string
@@ -116,7 +120,9 @@ export type Database = {
           id?: string
           local_amount?: number | null
           local_currency?: string | null
+          note?: string | null
           opportunity_id?: string | null
+          proposal_id?: string | null
           released_at?: string | null
           started_at?: string | null
           status?: string
@@ -129,6 +135,13 @@ export type Database = {
             columns: ["opportunity_id"]
             isOneToOne: false
             referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escrows_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
             referencedColumns: ["id"]
           },
         ]
@@ -167,6 +180,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       opportunities: {
         Row: {
@@ -314,8 +360,10 @@ export type Database = {
           client_type: string | null
           country: string | null
           created_at: string
+          discoverable: boolean
           full_name: string
           headline: string | null
+          hourly_rate: number | null
           id: string
           languages: string[]
           onboarding_complete: boolean
@@ -334,8 +382,10 @@ export type Database = {
           client_type?: string | null
           country?: string | null
           created_at?: string
+          discoverable?: boolean
           full_name?: string
           headline?: string | null
+          hourly_rate?: number | null
           id: string
           languages?: string[]
           onboarding_complete?: boolean
@@ -354,8 +404,10 @@ export type Database = {
           client_type?: string | null
           country?: string | null
           created_at?: string
+          discoverable?: boolean
           full_name?: string
           headline?: string | null
+          hourly_rate?: number | null
           id?: string
           languages?: string[]
           onboarding_complete?: boolean
@@ -376,6 +428,7 @@ export type Database = {
           created_at: string
           currency: string
           delivery_days: number | null
+          escrow_id: string | null
           id: string
           opportunity_id: string
           status: string
@@ -387,6 +440,7 @@ export type Database = {
           created_at?: string
           currency?: string
           delivery_days?: number | null
+          escrow_id?: string | null
           id?: string
           opportunity_id: string
           status?: string
@@ -398,12 +452,20 @@ export type Database = {
           created_at?: string
           currency?: string
           delivery_days?: number | null
+          escrow_id?: string | null
           id?: string
           opportunity_id?: string
           status?: string
           talent_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "proposals_escrow_id_fkey"
+            columns: ["escrow_id"]
+            isOneToOne: false
+            referencedRelation: "escrows"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "proposals_opportunity_id_fkey"
             columns: ["opportunity_id"]

@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Bank, ShieldCheck, Wallet } from "@phosphor-icons/react";
+import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
+import { advanceEscrow } from "@/lib/hiring.functions";
 import { money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
 
@@ -15,7 +18,10 @@ type Escrow = {
   amount: number;
   currency: string;
   status: string;
+  client_id: string | null;
+  talent_id: string | null;
 };
+
 
 type Transaction = {
   id: string;
@@ -56,7 +62,7 @@ function WalletPage() {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("escrows")
-        .select("id,title,company,amount,currency,status")
+        .select("id,title,company,amount,currency,status,client_id,talent_id")
         .or(`client_id.eq.${user.id},talent_id.eq.${user.id}`)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -80,7 +86,21 @@ function WalletPage() {
     },
   });
 
+  const queryClient = useQueryClient();
+  const advance = useServerFn(advanceEscrow);
+  const escrowMutation = useMutation({
+    mutationFn: (input: { escrowId: string; action: "start" | "deliver" | "release" }) => advance({ data: input }),
+    onSuccess: async () => {
+      toast.success("Escrow updated");
+      await queryClient.invalidateQueries({ queryKey: ["wallet-escrows", user?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["transactions", user?.id] });
+    },
+    onError: (error: unknown) =>
+      toast.error(error instanceof Error ? error.message : "Could not update this escrow"),
+  });
+
   const balance = escrows.reduce((total: number, item: Escrow) => total + Number(item.amount), 0);
+
 
   return (
     <AppShell>
@@ -138,6 +158,13 @@ function WalletPage() {
                   <p className="mt-3 inline-flex items-center gap-1 rounded-full bg-secondary/10 px-2 py-1 text-[11px] font-semibold text-secondary">
                     <ShieldCheck size={13} weight="fill" /> {escrow.status.replaceAll("_", " ")}
                   </p>
+                  <EscrowActions
+                    escrow={escrow}
+                    userId={user?.id}
+                    busy={escrowMutation.isPending}
+                    onAction={(action) => escrowMutation.mutate({ escrowId: escrow.id, action })}
+                  />
+
                 </article>
               ))
             ) : (
@@ -166,5 +193,45 @@ function WalletPage() {
         </section>
       </main>
     </AppShell>
+  );
+}
+function EscrowActions({
+  escrow,
+  userId,
+  busy,
+  onAction,
+}: {
+  escrow: Escrow;
+  userId: string | undefined;
+  busy: boolean;
+  onAction: (action: "start" | "deliver" | "release") => void;
+}) {
+  if (!userId) return null;
+  const isTalent = escrow.talent_id === userId;
+  const isClient = escrow.client_id === userId;
+
+  const actions: { label: string; action: "start" | "deliver" | "release" }[] = [];
+  if (isTalent && escrow.status === "funded") actions.push({ label: "Start work", action: "start" });
+  if (isTalent && (escrow.status === "funded" || escrow.status === "in_progress")) {
+    actions.push({ label: "Mark delivered", action: "deliver" });
+  }
+  if (isClient && escrow.status === "delivered") actions.push({ label: "Release payment", action: "release" });
+
+  if (!actions.length) return null;
+
+  return (
+    <div className="mt-4 flex gap-2">
+      {actions.map((item) => (
+        <Button
+          key={item.action}
+          className="h-10 flex-1"
+          variant={item.action === "release" ? "default" : "outline"}
+          disabled={busy}
+          onClick={() => onAction(item.action)}
+        >
+          {item.label}
+        </Button>
+      ))}
+    </div>
   );
 }
