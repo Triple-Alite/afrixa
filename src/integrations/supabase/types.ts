@@ -77,11 +77,13 @@ export type Database = {
           currency: string
           delivered_at: string | null
           funded_at: string | null
+          funding_source: string
           id: string
           local_amount: number | null
           local_currency: string | null
           note: string | null
           opportunity_id: string | null
+          payment_id: string | null
           proposal_id: string | null
           released_at: string | null
           started_at: string | null
@@ -97,11 +99,13 @@ export type Database = {
           currency?: string
           delivered_at?: string | null
           funded_at?: string | null
+          funding_source?: string
           id?: string
           local_amount?: number | null
           local_currency?: string | null
           note?: string | null
           opportunity_id?: string | null
+          payment_id?: string | null
           proposal_id?: string | null
           released_at?: string | null
           started_at?: string | null
@@ -117,11 +121,13 @@ export type Database = {
           currency?: string
           delivered_at?: string | null
           funded_at?: string | null
+          funding_source?: string
           id?: string
           local_amount?: number | null
           local_currency?: string | null
           note?: string | null
           opportunity_id?: string | null
+          payment_id?: string | null
           proposal_id?: string | null
           released_at?: string | null
           started_at?: string | null
@@ -135,6 +141,13 @@ export type Database = {
             columns: ["opportunity_id"]
             isOneToOne: false
             referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "escrows_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
             referencedColumns: ["id"]
           },
           {
@@ -289,6 +302,72 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          authorization_url: string | null
+          created_at: string
+          currency: string
+          escrow_id: string | null
+          id: string
+          metadata: Json
+          proposal_id: string | null
+          provider: string
+          purpose: string
+          reference: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          authorization_url?: string | null
+          created_at?: string
+          currency?: string
+          escrow_id?: string | null
+          id?: string
+          metadata?: Json
+          proposal_id?: string | null
+          provider: string
+          purpose?: string
+          reference: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          authorization_url?: string | null
+          created_at?: string
+          currency?: string
+          escrow_id?: string | null
+          id?: string
+          metadata?: Json
+          proposal_id?: string | null
+          provider?: string
+          purpose?: string
+          reference?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_escrow_id_fkey"
+            columns: ["escrow_id"]
+            isOneToOne: false
+            referencedRelation: "escrows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payout_methods: {
         Row: {
           account_name: string | null
@@ -373,6 +452,7 @@ export type Database = {
           total_earned: number
           updated_at: string
           verified: boolean
+          wallet_balance: number
           years_experience: string | null
         }
         Insert: {
@@ -395,6 +475,7 @@ export type Database = {
           total_earned?: number
           updated_at?: string
           verified?: boolean
+          wallet_balance?: number
           years_experience?: string | null
         }
         Update: {
@@ -417,6 +498,7 @@ export type Database = {
           total_earned?: number
           updated_at?: string
           verified?: boolean
+          wallet_balance?: number
           years_experience?: string | null
         }
         Relationships: []
