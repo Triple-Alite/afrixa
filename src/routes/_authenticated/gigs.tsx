@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -7,8 +7,9 @@ import { CurrencyDollar, Timer, Toolbox } from "@phosphor-icons/react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
+import { GigCard } from "@/components/afrixa/OpportunityCard";
 import { useAuth } from "@/hooks/useAuth";
-import { SKILLS } from "@/lib/afrixa";
+import { SKILLS, type Opportunity } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -227,7 +228,7 @@ function PostGigForm({
           </Button>
         </section>
       </main>
-    </AppShell>
+    </>
   );
 }
 
