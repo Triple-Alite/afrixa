@@ -37,7 +37,62 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const { profile, user, signOut } = useAuth();
+  const { profile, user, signOut, refreshProfile } = useAuth();
+  const queryClient = useQueryClient();
+  const { unread } = useNotifications();
+  const avatarInput = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [newItem, setNewItem] = useState({ title: "", category: "" });
+
+  const discoverable = (profile as { discoverable?: boolean } | null)?.discoverable ?? true;
+
+  async function onAvatarPicked(file: File | undefined) {
+    if (!file || !user) return;
+    setBusy(true);
+    try {
+      const url = await uploadUserFile("avatars", user.id, file);
+      const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+      if (error) throw error;
+      refreshProfile();
+      toast.success("Profile photo updated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function toggleDiscoverable(next: boolean) {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ discoverable: next }).eq("id", user.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    refreshProfile();
+    toast.success(next ? "You are visible to clients" : "Hidden from talent search");
+  }
+
+  async function addPortfolioItem() {
+    if (!user || !newItem.title.trim()) return;
+    setBusy(true);
+    try {
+      const { error } = await supabase.from("portfolio_items").insert({
+        user_id: user.id,
+        title: newItem.title.trim(),
+        category: newItem.category.trim() || null,
+      });
+      if (error) throw error;
+      setNewItem({ title: "", category: "" });
+      await queryClient.invalidateQueries({ queryKey: ["portfolio", user.id] });
+      toast.success("Portfolio item added");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not save item");
+    } finally {
+      setBusy(false);
+    }
+  }
+
 
   const { data: portfolio = [] } = useQuery({
     queryKey: ["portfolio", user?.id],
