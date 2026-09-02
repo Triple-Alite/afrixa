@@ -1,13 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Certificate, Gear, ShieldCheck, SignOut } from "@phosphor-icons/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bell, Camera, Certificate, Gear, Plus, ShieldCheck, SignOut, Users } from "@phosphor-icons/react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
+import { uploadUserFile } from "@/lib/uploads";
 import { initials, money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
