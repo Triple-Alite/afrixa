@@ -65,9 +65,10 @@ function NotificationsPage() {
               </article>
             );
             return item.link ? (
-              <Link key={item.id} to={item.link} className="block">
+              <Link key={item.id} to={item.link as never} className="block">
                 {card}
               </Link>
+
             ) : (
               <div key={item.id}>{card}</div>
             );
