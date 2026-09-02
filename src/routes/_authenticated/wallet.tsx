@@ -62,7 +62,7 @@ function WalletPage() {
       if (!user) throw new Error("Not signed in");
       const { data, error } = await supabase
         .from("escrows")
-        .select("id,title,company,amount,currency,status")
+        .select("id,title,company,amount,currency,status,client_id,talent_id")
         .or(`client_id.eq.${user.id},talent_id.eq.${user.id}`)
         .order("created_at", { ascending: false });
       if (error) throw error;
