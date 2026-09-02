@@ -229,6 +229,31 @@ function ProfilePage() {
           </div>
         </section>
 
+        {profile?.role === "client" ? (
+          <section className="grid grid-cols-2 gap-3">
+            <Link
+              to="/proposals"
+              className="rounded-2xl border border-border bg-card p-4 text-sm font-semibold shadow-card"
+            >
+              <Certificate size={20} className="mb-2 text-primary" /> Proposals
+            </Link>
+            <Link
+              to="/talent"
+              className="rounded-2xl border border-border bg-card p-4 text-sm font-semibold shadow-card"
+            >
+              <Users size={20} className="mb-2 text-secondary" /> Find talent
+            </Link>
+          </section>
+        ) : (
+          <section className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 shadow-card">
+            <div className="pr-3">
+              <h2 className="text-base font-semibold">Discoverable</h2>
+              <p className="mt-1 text-xs text-muted-foreground">Let clients find you in talent search</p>
+            </div>
+            <Switch checked={discoverable} onCheckedChange={(next) => void toggleDiscoverable(next)} />
+          </section>
+        )}
+
         <section>
           <h2 className="text-base font-semibold">Portfolio</h2>
           <div className="mt-3 space-y-3">
@@ -241,11 +266,34 @@ function ProfilePage() {
               ))
             ) : (
               <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-                Add portfolio work from your next completed gig.
+                Add portfolio work to strengthen your profile.
               </p>
             )}
+
+            <div className="space-y-2 rounded-2xl border border-border bg-card p-4 shadow-card">
+              <Input
+                value={newItem.title}
+                onChange={(event) => setNewItem((prev) => ({ ...prev, title: event.target.value }))}
+                placeholder="Project title"
+                className="h-11 rounded-xl"
+              />
+              <Input
+                value={newItem.category}
+                onChange={(event) => setNewItem((prev) => ({ ...prev, category: event.target.value }))}
+                placeholder="Category (optional)"
+                className="h-11 rounded-xl"
+              />
+              <Button
+                className="h-11 w-full"
+                disabled={busy || !newItem.title.trim()}
+                onClick={() => void addPortfolioItem()}
+              >
+                <Plus size={16} /> Add portfolio item
+              </Button>
+            </div>
           </div>
         </section>
+
 
         <Button variant="outline" className="h-12 w-full bg-card" onClick={() => signOut()}>
           <SignOut size={16} /> Sign out
