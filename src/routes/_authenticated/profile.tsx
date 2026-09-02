@@ -132,17 +132,54 @@ function ProfilePage() {
         title="Profile"
         subtitle={profile?.role === "client" ? "Hiring account" : "Talent account"}
         action={
-          <Button variant="ghost" size="icon" aria-label="Settings">
-            <Gear size={18} />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Link
+              to="/notifications"
+              aria-label="Notifications"
+              className="relative flex size-9 items-center justify-center rounded-full border border-border bg-card"
+            >
+              <Bell size={18} />
+              {unread ? (
+                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-secondary text-[9px] font-bold text-secondary-foreground">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              ) : null}
+            </Link>
+            <Button variant="ghost" size="icon" aria-label="Settings">
+              <Gear size={18} />
+            </Button>
+          </div>
         }
       />
       <main className="space-y-5 px-4">
         <section className="surface-hero rounded-2xl p-5 text-primary-foreground shadow-lift">
           <div className="flex items-start gap-4">
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-lg font-bold">
-              {initials(profile?.full_name)}
-            </span>
+            <button
+              type="button"
+              onClick={() => avatarInput.current?.click()}
+              disabled={busy}
+              aria-label="Change profile photo"
+              className="relative size-16 shrink-0 overflow-hidden rounded-2xl bg-white/15"
+            >
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="Profile photo" className="size-full object-cover" />
+              ) : (
+                <span className="flex size-full items-center justify-center text-lg font-bold">
+                  {initials(profile?.full_name)}
+                </span>
+              )}
+              <span className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-black/40 py-0.5">
+                <Camera size={12} weight="bold" />
+              </span>
+            </button>
+            <input
+              ref={avatarInput}
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={(event) => void onAvatarPicked(event.target.files?.[0])}
+            />
+
             <div className="min-w-0 flex-1">
               <h2 className="truncate text-xl font-bold">{profile?.full_name ?? "Afrixa member"}</h2>
               <p className="mt-1 text-sm text-primary-foreground/75">
