@@ -48,10 +48,14 @@ function ProposalsPage() {
 
   const [funding, setFunding] = useState<ClientProposal | null>(null);
 
-  const { data: proposals = [], isLoading } = useQuery({
+  const { job } = Route.useSearch();
+
+  const { data: allProposals = [], isLoading } = useQuery({
     queryKey: ["client-proposals"],
     queryFn: () => fetchProposals(),
   });
+
+  const proposals = job ? allProposals.filter((item) => item.opportunity_id === job) : allProposals;
 
   const { data: wallet } = useQuery({ queryKey: ["wallet-balance"], queryFn: () => fetchBalance() });
 
