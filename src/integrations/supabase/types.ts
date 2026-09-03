@@ -372,31 +372,43 @@ export type Database = {
         Row: {
           account_name: string | null
           account_number: string | null
+          bank_code: string | null
           bank_name: string | null
           country: string | null
           created_at: string
           id: string
+          is_default: boolean
           method: string
+          phone_number: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           account_name?: string | null
           account_number?: string | null
+          bank_code?: string | null
           bank_name?: string | null
           country?: string | null
           created_at?: string
           id?: string
+          is_default?: boolean
           method?: string
+          phone_number?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           account_name?: string | null
           account_number?: string | null
+          bank_code?: string | null
           bank_name?: string | null
           country?: string | null
           created_at?: string
           id?: string
+          is_default?: boolean
           method?: string
+          phone_number?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -446,6 +458,7 @@ export type Database = {
           id: string
           languages: string[]
           onboarding_complete: boolean
+          preferred_gateway: string | null
           primary_skill: string | null
           profile_strength: number
           role: Database["public"]["Enums"]["app_user_role"] | null
@@ -469,6 +482,7 @@ export type Database = {
           id: string
           languages?: string[]
           onboarding_complete?: boolean
+          preferred_gateway?: string | null
           primary_skill?: string | null
           profile_strength?: number
           role?: Database["public"]["Enums"]["app_user_role"] | null
@@ -492,6 +506,7 @@ export type Database = {
           id?: string
           languages?: string[]
           onboarding_complete?: boolean
+          preferred_gateway?: string | null
           primary_skill?: string | null
           profile_strength?: number
           role?: Database["public"]["Enums"]["app_user_role"] | null
