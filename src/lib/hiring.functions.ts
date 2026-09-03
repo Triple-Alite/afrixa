@@ -62,74 +62,9 @@ export const listClientProposals = createServerFn({ method: "GET" })
     });
   });
 
-/** Client accepts a proposal: funds escrow, declines the rest, notifies talent. */
-export const acceptProposal = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ proposalId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-
-    const { data: proposal, error } = await supabase
-      .from("proposals")
-      .select("id,talent_id,opportunity_id,bid_amount,currency,status")
-      .eq("id", data.proposalId)
-      .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!proposal) throw new Error("Proposal not found");
-    if (proposal.status === "accepted") throw new Error("Proposal already accepted");
-
-    const { data: opportunity } = await supabase
-      .from("opportunities")
-      .select("id,title,company,client_id,currency,budget_max,budget_min,price_from")
-      .eq("id", proposal.opportunity_id)
-      .maybeSingle();
-    if (!opportunity || opportunity.client_id !== userId) throw new Error("Forbidden");
-
-    const amount =
-      Number(proposal.bid_amount ?? 0) ||
-      Number(opportunity.budget_max ?? opportunity.budget_min ?? opportunity.price_from ?? 0);
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: escrow, error: escrowError } = await supabaseAdmin
-      .from("escrows")
-      .insert({
-        opportunity_id: opportunity.id,
-        proposal_id: proposal.id,
-        client_id: userId,
-        talent_id: proposal.talent_id,
-        title: opportunity.title,
-        company: opportunity.company,
-        amount,
-        currency: proposal.currency || opportunity.currency,
-        status: "funded",
-        funded_at: new Date().toISOString(),
-      })
-      .select("id,amount,currency")
-      .single();
-    if (escrowError) throw new Error(escrowError.message);
-
-    await supabaseAdmin
-      .from("proposals")
-      .update({ status: "accepted", escrow_id: escrow.id })
-      .eq("id", proposal.id);
-    await supabaseAdmin
-      .from("proposals")
-      .update({ status: "declined" })
-      .eq("opportunity_id", opportunity.id)
-      .neq("id", proposal.id)
-      .eq("status", "submitted");
-
-    await supabaseAdmin.from("notifications").insert({
-      user_id: proposal.talent_id,
-      type: "hired",
-      title: "You have been hired",
-      body: `${opportunity.title} — escrow funded`,
-      link: "/wallet",
-    });
-
-    return { escrowId: escrow.id, amount: Number(escrow.amount), currency: escrow.currency };
-  });
+// Hiring is funded through a real payment gateway — see `fundHire` in
+// src/lib/payments.functions.ts. Escrows are never created without a
+// confirmed payment or a wallet debit.
 
 /** Client declines a proposal. */
 export const declineProposal = createServerFn({ method: "POST" })
