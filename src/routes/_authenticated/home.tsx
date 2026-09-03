@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, MagnifyingGlass, Wallet } from "@phosphor-icons/react";
+import { MagnifyingGlass, Wallet } from "@phosphor-icons/react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AppShell } from "@/components/afrixa/AppShell";
+import { NotificationBell } from "@/components/afrixa/NotificationBell";
 import { GigCard, OpportunityCard } from "@/components/afrixa/OpportunityCard";
 import { OPPORTUNITY_STATS, initials, money, type Opportunity } from "@/lib/afrixa";
 
@@ -79,9 +80,7 @@ function HomePage() {
           >
             <Wallet size={18} />
           </Link>
-          <span className="flex size-9 items-center justify-center rounded-full bg-white/15">
-            <Bell size={18} />
-          </span>
+          <NotificationBell />
         </div>
 
         <Link

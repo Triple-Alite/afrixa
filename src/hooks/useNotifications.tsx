@@ -61,5 +61,15 @@ export function useNotifications() {
     await queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
   }
 
-  return { items, unread, isLoading: query.isLoading, markAllRead };
+  async function markRead(id: string) {
+    if (!userId) return;
+    await supabase
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", userId);
+    await queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+  }
+
+  return { items, unread, isLoading: query.isLoading, markAllRead, markRead };
 }
