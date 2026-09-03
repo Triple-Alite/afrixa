@@ -27,6 +27,37 @@ export type Opportunity = {
   description: string | null;
   skills: string[];
   created_at: string;
+  status?: string | null;
+};
+
+export type GigStatus = "open" | "in_progress" | "completed";
+
+export function gigStatus(value: string | null | undefined): GigStatus {
+  return value === "in_progress" || value === "completed" ? value : "open";
+}
+
+export const GIG_STATUS_META: Record<
+  GigStatus,
+  { label: string; progress: number; tone: string; bar: string }
+> = {
+  open: {
+    label: "Open",
+    progress: 20,
+    tone: "bg-muted text-muted-foreground",
+    bar: "bg-muted-foreground/50",
+  },
+  in_progress: {
+    label: "In progress",
+    progress: 65,
+    tone: "bg-gold/15 text-gold-foreground",
+    bar: "bg-gold",
+  },
+  completed: {
+    label: "Completed",
+    progress: 100,
+    tone: "bg-secondary/12 text-secondary",
+    bar: "bg-secondary",
+  },
 };
 
 const SYMBOLS: Record<string, string> = {
