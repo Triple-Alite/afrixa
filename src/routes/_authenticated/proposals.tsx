@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/proposals")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const job = typeof search["job"] === "string" ? search["job"] : undefined;
+    return job ? { job } : {};
+  },
   head: () => ({
     meta: [
       { title: "Proposals received — Afrixa" },
