@@ -275,6 +275,7 @@ export async function fundEscrowForProposal(input: {
   if (error) throw new Error(error.message);
 
   await supabaseAdmin.from("proposals").update({ status: "accepted", escrow_id: escrow.id }).eq("id", proposal.id);
+  await supabaseAdmin.from("opportunities").update({ status: "in_progress" }).eq("id", opportunity.id);
   await supabaseAdmin
     .from("proposals")
     .update({ status: "declined" })
