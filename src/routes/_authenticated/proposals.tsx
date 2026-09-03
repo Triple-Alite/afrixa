@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/proposals")({
+  validateSearch: (search: Record<string, unknown>): { job?: string } => {
+    const job = typeof search["job"] === "string" ? search["job"] : undefined;
+    return { ...(job ? { job } : {}) };
+  },
   head: () => ({
     meta: [
       { title: "Proposals received — Afrixa" },
@@ -44,10 +48,14 @@ function ProposalsPage() {
 
   const [funding, setFunding] = useState<ClientProposal | null>(null);
 
-  const { data: proposals = [], isLoading } = useQuery({
+  const { job } = Route.useSearch();
+
+  const { data: allProposals = [], isLoading } = useQuery({
     queryKey: ["client-proposals"],
     queryFn: () => fetchProposals(),
   });
+
+  const proposals = job ? allProposals.filter((item) => item.opportunity_id === job) : allProposals;
 
   const { data: wallet } = useQuery({ queryKey: ["wallet-balance"], queryFn: () => fetchBalance() });
 
