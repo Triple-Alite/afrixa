@@ -2,7 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, ShieldCheck, Star, Timer } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
-import { budgetLabel, initials, timeLeft, type Opportunity } from "@/lib/afrixa";
+import {
+  budgetLabel,
+  GIG_STATUS_META,
+  gigStatus,
+  initials,
+  timeLeft,
+  type Opportunity,
+} from "@/lib/afrixa";
 
 export function EscrowBadge() {
   return (
