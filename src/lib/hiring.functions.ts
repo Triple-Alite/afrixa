@@ -90,7 +90,7 @@ export const advanceEscrow = createServerFn({ method: "POST" })
 
     const { data: escrow, error } = await supabase
       .from("escrows")
-      .select("id,status,amount,currency,title,client_id,talent_id")
+      .select("id,status,amount,currency,title,client_id,talent_id,opportunity_id")
       .eq("id", data.escrowId)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -137,6 +137,12 @@ export const advanceEscrow = createServerFn({ method: "POST" })
 
     const amount = Number(escrow.amount);
     await supabaseAdmin.from("escrows").update({ status: "released", released_at: now }).eq("id", escrow.id);
+    if (escrow.opportunity_id) {
+      await supabaseAdmin
+        .from("opportunities")
+        .update({ status: "completed" })
+        .eq("id", escrow.opportunity_id);
+    }
     await supabaseAdmin.from("transactions").insert({
       user_id: escrow.talent_id!,
       type: "credit",

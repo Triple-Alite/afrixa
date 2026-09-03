@@ -249,6 +249,7 @@ export type Database = {
           rating: number | null
           reviews_count: number
           skills: string[]
+          status: string
           title: string
           work_mode: string | null
         }
@@ -273,6 +274,7 @@ export type Database = {
           rating?: number | null
           reviews_count?: number
           skills?: string[]
+          status?: string
           title: string
           work_mode?: string | null
         }
@@ -297,6 +299,7 @@ export type Database = {
           rating?: number | null
           reviews_count?: number
           skills?: string[]
+          status?: string
           title?: string
           work_mode?: string | null
         }
