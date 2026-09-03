@@ -1,13 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import { CheckCircle, CreditCard, Wallet, XCircle } from "@phosphor-icons/react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
-import { acceptProposal, declineProposal, listClientProposals } from "@/lib/hiring.functions";
+import { declineProposal, listClientProposals, type ClientProposal } from "@/lib/hiring.functions";
+import { fundHire, getWalletBalance } from "@/lib/payments.functions";
 import { money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/proposals")({
   head: () => ({
@@ -29,23 +38,35 @@ export const Route = createFileRoute("/_authenticated/proposals")({
 function ProposalsPage() {
   const queryClient = useQueryClient();
   const fetchProposals = useServerFn(listClientProposals);
-  const accept = useServerFn(acceptProposal);
+  const fetchBalance = useServerFn(getWalletBalance);
+  const fund = useServerFn(fundHire);
   const decline = useServerFn(declineProposal);
+
+  const [funding, setFunding] = useState<ClientProposal | null>(null);
 
   const { data: proposals = [], isLoading } = useQuery({
     queryKey: ["client-proposals"],
     queryFn: () => fetchProposals(),
   });
 
-  const acceptMutation = useMutation({
-    mutationFn: (proposalId: string) => accept({ data: { proposalId } }),
+  const { data: wallet } = useQuery({ queryKey: ["wallet-balance"], queryFn: () => fetchBalance() });
+
+  const fundMutation = useMutation({
+    mutationFn: (input: { proposalId: string; method: "card" | "wallet"; provider?: "paystack" | "flutterwave" }) =>
+      fund({ data: input }),
     onSuccess: async (result) => {
+      if (result.method === "card" && "authorizationUrl" in result) {
+        toast.info("Opening secure checkout…");
+        window.location.href = result.authorizationUrl;
+        return;
+      }
+      setFunding(null);
       toast.success(`Hired — ${money(result.amount, result.currency)} held in escrow`);
       await queryClient.invalidateQueries({ queryKey: ["client-proposals"] });
+      await queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
       await queryClient.invalidateQueries({ queryKey: ["wallet-escrows"] });
     },
-    onError: (error: unknown) =>
-      toast.error(error instanceof Error ? error.message : "Could not accept this proposal"),
+    onError: (error: unknown) => toast.error(error instanceof Error ? error.message : "Could not fund this hire"),
   });
 
   const declineMutation = useMutation({
@@ -57,7 +78,7 @@ function ProposalsPage() {
     onError: (error: unknown) => toast.error(error instanceof Error ? error.message : "Could not decline"),
   });
 
-  const busy = acceptMutation.isPending || declineMutation.isPending;
+  const busy = fundMutation.isPending || declineMutation.isPending;
 
   return (
     <AppShell>
@@ -108,11 +129,7 @@ function ProposalsPage() {
 
               {proposal.status === "submitted" ? (
                 <div className="mt-4 flex gap-2">
-                  <Button
-                    className="h-11 flex-1"
-                    disabled={busy}
-                    onClick={() => acceptMutation.mutate(proposal.id)}
-                  >
+                  <Button className="h-11 flex-1" disabled={busy} onClick={() => setFunding(proposal)}>
                     <CheckCircle size={16} /> Hire &amp; fund escrow
                   </Button>
                   <Button
@@ -140,6 +157,49 @@ function ProposalsPage() {
           </p>
         )}
       </main>
+
+      <Dialog open={Boolean(funding)} onOpenChange={(open) => !open && setFunding(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Fund escrow</DialogTitle>
+            <DialogDescription>
+              {funding
+                ? `${money(Number(funding.bid_amount ?? 0), funding.currency)} for ${funding.opportunity_title}. Funds stay in escrow until you release them.`
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            <Button
+              className="h-12 w-full justify-start"
+              disabled={busy || !funding}
+              onClick={() =>
+                funding && fundMutation.mutate({ proposalId: funding.id, method: "card", provider: "paystack" })
+              }
+            >
+              <CreditCard size={18} /> Pay with Paystack
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 w-full justify-start bg-card"
+              disabled={busy || !funding}
+              onClick={() =>
+                funding && fundMutation.mutate({ proposalId: funding.id, method: "card", provider: "flutterwave" })
+              }
+            >
+              <CreditCard size={18} /> Pay with Flutterwave
+            </Button>
+            <Button
+              variant="secondary"
+              className="h-12 w-full justify-start"
+              disabled={busy || !funding}
+              onClick={() => funding && fundMutation.mutate({ proposalId: funding.id, method: "wallet" })}
+            >
+              <Wallet size={18} /> Use wallet balance ({money(wallet?.balance ?? 0, wallet?.currency ?? "NGN")})
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }
