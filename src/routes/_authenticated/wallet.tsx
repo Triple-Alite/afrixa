@@ -226,6 +226,45 @@ function WalletPage() {
           </div>
         </section>
       </main>
+
+      <Dialog open={topUpOpen} onOpenChange={setTopUpOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Top up wallet</DialogTitle>
+            <DialogDescription>
+              Pay securely with your preferred gateway. Your balance can then fund escrows instantly.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Input
+            type="number"
+            min="100"
+            inputMode="decimal"
+            value={topUpAmount}
+            onChange={(event) => setTopUpAmount(event.target.value)}
+            placeholder="Amount"
+            className="h-12"
+          />
+
+          <div className="space-y-2">
+            <Button
+              className="h-12 w-full justify-start"
+              disabled={topUpMutation.isPending || Number(topUpAmount) <= 0}
+              onClick={() => topUpMutation.mutate("paystack")}
+            >
+              <CreditCard size={18} /> Pay with Paystack
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 w-full justify-start bg-card"
+              disabled={topUpMutation.isPending || Number(topUpAmount) <= 0}
+              onClick={() => topUpMutation.mutate("flutterwave")}
+            >
+              <CreditCard size={18} /> Pay with Flutterwave
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }
