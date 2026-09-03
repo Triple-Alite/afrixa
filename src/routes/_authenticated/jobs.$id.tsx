@@ -72,6 +72,21 @@ function JobDetailPage() {
     },
   });
 
+  const isOwner = Boolean(user?.id && job?.client_id && job.client_id === user.id);
+
+  const { data: proposalCount = 0 } = useQuery({
+    queryKey: ["opportunity-proposal-count", id],
+    enabled: isOwner,
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("proposals")
+        .select("id", { count: "exact", head: true })
+        .eq("opportunity_id", id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
   const apply = useMutation({
     mutationFn: async () => {
       if (!user || !job) throw new Error("Not signed in");
