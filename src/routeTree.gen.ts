@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
 import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedGigsRouteImport } from './routes/_authenticated/gigs'
@@ -45,6 +46,12 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedApplicationsRoute =
+  AuthenticatedApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
@@ -144,6 +151,7 @@ const ApiPublicWebhooksPaystackRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/gigs': typeof AuthenticatedGigsRoute
@@ -166,6 +174,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/gigs': typeof AuthenticatedGigsRoute
@@ -190,6 +199,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/gigs': typeof AuthenticatedGigsRoute
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/applications'
     | '/assessment'
     | '/explore'
     | '/gigs'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/applications'
     | '/assessment'
     | '/explore'
     | '/gigs'
@@ -259,6 +271,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/applications'
     | '/_authenticated/assessment'
     | '/_authenticated/explore'
     | '/_authenticated/gigs'
@@ -309,6 +322,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/applications': {
+      id: '/_authenticated/applications'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/assessment': {
       id: '/_authenticated/assessment'
@@ -464,6 +484,7 @@ const AuthenticatedTalentRouteWithChildren =
   AuthenticatedTalentRoute._addFileChildren(AuthenticatedTalentRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedGigsRoute: typeof AuthenticatedGigsRoute
@@ -481,6 +502,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedGigsRoute: AuthenticatedGigsRoute,
