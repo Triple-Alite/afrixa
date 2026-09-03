@@ -162,17 +162,20 @@ function WalletPage() {
           </Button>
         </section>
 
-        <section className="rounded-2xl border border-border bg-card p-4 shadow-card">
+        <Link
+          to="/payment-setup"
+          className="block rounded-2xl border border-border bg-card p-4 shadow-card"
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold">Payout method</h2>
-              <p className="mt-1 text-xs text-muted-foreground">Bank and mobile money support</p>
+              <h2 className="text-base font-semibold">Payment setup</h2>
+              <p className="mt-1 text-xs text-muted-foreground">Bank details, mobile money and checkout method</p>
             </div>
-            <Button variant="outline" size="icon" aria-label="Add payout method">
+            <span className="flex size-9 items-center justify-center rounded-xl border border-border">
               <Bank size={18} />
-            </Button>
+            </span>
           </div>
-        </section>
+        </Link>
 
         <section>
           <h2 className="text-base font-semibold">Active escrows</h2>

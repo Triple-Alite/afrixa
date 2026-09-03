@@ -20,6 +20,7 @@ import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPaymentCallbackRouteImport } from './routes/_authenticated/payment-callback'
+import { Route as AuthenticatedPaymentSetupRouteImport } from './routes/_authenticated/payment-setup'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedProposalsRouteImport } from './routes/_authenticated/proposals'
 import { Route as AuthenticatedTalentRouteImport } from './routes/_authenticated/talent'
@@ -86,6 +87,12 @@ const AuthenticatedPaymentCallbackRoute =
     path: '/payment-callback',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPaymentSetupRoute =
+  AuthenticatedPaymentSetupRouteImport.update({
+    id: '/payment-setup',
+    path: '/payment-setup',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/payment-callback': typeof AuthenticatedPaymentCallbackRoute
+  '/payment-setup': typeof AuthenticatedPaymentSetupRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/payment-callback': typeof AuthenticatedPaymentCallbackRoute
+  '/payment-setup': typeof AuthenticatedPaymentSetupRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
@@ -189,6 +198,7 @@ export interface FileRoutesById {
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/payment-callback': typeof AuthenticatedPaymentCallbackRoute
+  '/_authenticated/payment-setup': typeof AuthenticatedPaymentSetupRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/proposals': typeof AuthenticatedProposalsRoute
   '/_authenticated/talent': typeof AuthenticatedTalentRouteWithChildren
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/onboarding'
     | '/payment-callback'
+    | '/payment-setup'
     | '/profile'
     | '/proposals'
     | '/talent'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/notifications'
     | '/onboarding'
     | '/payment-callback'
+    | '/payment-setup'
     | '/profile'
     | '/proposals'
     | '/talent'
@@ -255,6 +267,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
     | '/_authenticated/payment-callback'
+    | '/_authenticated/payment-setup'
     | '/_authenticated/profile'
     | '/_authenticated/proposals'
     | '/_authenticated/talent'
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/payment-callback'
       fullPath: '/payment-callback'
       preLoaderRoute: typeof AuthenticatedPaymentCallbackRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/payment-setup': {
+      id: '/_authenticated/payment-setup'
+      path: '/payment-setup'
+      fullPath: '/payment-setup'
+      preLoaderRoute: typeof AuthenticatedPaymentSetupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile': {
@@ -452,6 +472,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPaymentCallbackRoute: typeof AuthenticatedPaymentCallbackRoute
+  AuthenticatedPaymentSetupRoute: typeof AuthenticatedPaymentSetupRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProposalsRoute: typeof AuthenticatedProposalsRoute
   AuthenticatedTalentRoute: typeof AuthenticatedTalentRouteWithChildren
@@ -468,6 +489,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPaymentCallbackRoute: AuthenticatedPaymentCallbackRoute,
+  AuthenticatedPaymentSetupRoute: AuthenticatedPaymentSetupRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedProposalsRoute: AuthenticatedProposalsRoute,
   AuthenticatedTalentRoute: AuthenticatedTalentRouteWithChildren,
