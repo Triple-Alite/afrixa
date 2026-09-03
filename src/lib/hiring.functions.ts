@@ -90,7 +90,7 @@ export const advanceEscrow = createServerFn({ method: "POST" })
 
     const { data: escrow, error } = await supabase
       .from("escrows")
-      .select("id,status,amount,currency,title,client_id,talent_id")
+      .select("id,status,amount,currency,title,client_id,talent_id,opportunity_id")
       .eq("id", data.escrowId)
       .maybeSingle();
     if (error) throw new Error(error.message);
