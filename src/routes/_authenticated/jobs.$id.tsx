@@ -230,7 +230,29 @@ function JobDetailPage() {
           ) : null}
         </div>
 
-        {open ? (
+        {isOwner ? (
+          <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-card">
+            <p className="text-sm font-semibold">Your posting</p>
+            <p className="text-xs text-muted-foreground">
+              {proposalCount
+                ? `${proposalCount} ${proposalCount === 1 ? "proposal" : "proposals"} received. Accept one to fund escrow — the talent starts work and you release payment on approval.`
+                : "No proposals yet. Talent applications appear here and in your proposals inbox."}
+            </p>
+            <Link
+              to="/proposals"
+              search={{ job: id }}
+              className="flex h-12 items-center justify-center rounded-md bg-primary text-sm font-medium text-primary-foreground"
+            >
+              Review proposals{proposalCount ? ` (${proposalCount})` : ""}
+            </Link>
+            <Link
+              to="/wallet"
+              className="flex h-11 items-center justify-center rounded-md border border-border text-sm font-medium"
+            >
+              Manage escrow
+            </Link>
+          </div>
+        ) : open ? (
           <div className="space-y-3 rounded-2xl border border-border bg-card p-4 shadow-card">
             <p className="text-sm font-semibold">Send a proposal</p>
             <div className="space-y-1.5">
