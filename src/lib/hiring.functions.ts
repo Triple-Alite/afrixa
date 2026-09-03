@@ -202,31 +202,26 @@ export const advanceEscrow = createServerFn({ method: "POST" })
 
     const amount = Number(escrow.amount);
     await supabaseAdmin.from("escrows").update({ status: "released", released_at: now }).eq("id", escrow.id);
-    await supabaseAdmin.from("transactions").insert([
-      {
-        user_id: escrow.talent_id!,
-        type: "credit",
-        amount,
-        currency: escrow.currency,
-        description: `Escrow released — ${escrow.title}`,
-      },
-      {
-        user_id: escrow.client_id!,
-        type: "debit",
-        amount,
-        currency: escrow.currency,
-        description: `Escrow payment — ${escrow.title}`,
-      },
-    ]);
+    await supabaseAdmin.from("transactions").insert({
+      user_id: escrow.talent_id!,
+      type: "credit",
+      amount,
+      currency: escrow.currency,
+      description: `Escrow released — ${escrow.title}`,
+    });
 
+    // Released escrow money lands in the talent's withdrawable wallet balance.
     const { data: talentProfile } = await supabaseAdmin
       .from("profiles")
-      .select("total_earned")
+      .select("total_earned,wallet_balance")
       .eq("id", escrow.talent_id!)
       .maybeSingle();
     await supabaseAdmin
       .from("profiles")
-      .update({ total_earned: Number(talentProfile?.total_earned ?? 0) + amount })
+      .update({
+        total_earned: Number(talentProfile?.total_earned ?? 0) + amount,
+        wallet_balance: Number(talentProfile?.wallet_balance ?? 0) + amount,
+      })
       .eq("id", escrow.talent_id!);
 
     await supabaseAdmin.from("notifications").insert({
