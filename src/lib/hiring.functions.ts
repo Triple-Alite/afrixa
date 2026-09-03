@@ -169,3 +169,52 @@ export const advanceEscrow = createServerFn({ method: "POST" })
 
     return { status: "released" };
   });
+
+export type TalentApplication = {
+  id: string;
+  status: string;
+  bid_amount: number | null;
+  currency: string;
+  delivery_days: number | null;
+  created_at: string;
+  opportunity_id: string;
+  opportunity_title: string;
+  opportunity_company: string;
+  escrow_id: string | null;
+  escrow_status: string | null;
+};
+
+/** Applications the signed-in talent has sent, with escrow stage when hired. */
+export const listTalentApplications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<TalentApplication[]> => {
+    const { supabase, userId } = context;
+
+    const { data: proposals, error } = await supabase
+      .from("proposals")
+      .select("id,status,bid_amount,currency,delivery_days,created_at,opportunity_id,escrow_id")
+      .eq("talent_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    if (!proposals?.length) return [];
+
+    const { data: opportunities } = await supabase
+      .from("opportunities")
+      .select("id,title,company")
+      .in("id", [...new Set(proposals.map((p) => p.opportunity_id))]);
+    const oppMap = new Map((opportunities ?? []).map((o) => [o.id, o]));
+
+    const escrowIds = proposals.map((p) => p.escrow_id).filter((id): id is string => Boolean(id));
+    const escrowMap = new Map<string, string>();
+    if (escrowIds.length) {
+      const { data: escrows } = await supabase.from("escrows").select("id,status").in("id", escrowIds);
+      for (const escrow of escrows ?? []) escrowMap.set(escrow.id, escrow.status);
+    }
+
+    return proposals.map((p) => ({
+      ...p,
+      opportunity_title: oppMap.get(p.opportunity_id)?.title ?? "Opportunity",
+      opportunity_company: oppMap.get(p.opportunity_id)?.company ?? "Afrixa client",
+      escrow_status: p.escrow_id ? (escrowMap.get(p.escrow_id) ?? null) : null,
+    }));
+  });
