@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Bank, ShieldCheck, Wallet } from "@phosphor-icons/react";
+import { Bank, CreditCard, Plus, ShieldCheck, Wallet } from "@phosphor-icons/react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { advanceEscrow } from "@/lib/hiring.functions";
+import { getWalletBalance, startWalletTopUp } from "@/lib/payments.functions";
 import { money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type Escrow = {
   id: string;
