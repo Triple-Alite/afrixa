@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Bank, ShieldCheck, Wallet } from "@phosphor-icons/react";
+import { Bank, CreditCard, Plus, ShieldCheck, Wallet } from "@phosphor-icons/react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { advanceEscrow } from "@/lib/hiring.functions";
+import { getWalletBalance, startWalletTopUp } from "@/lib/payments.functions";
 import { money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type Escrow = {
   id: string;
@@ -99,8 +103,30 @@ function WalletPage() {
       toast.error(error instanceof Error ? error.message : "Could not update this escrow"),
   });
 
-  const balance = escrows.reduce((total: number, item: Escrow) => total + Number(item.amount), 0);
+  const fetchBalance = useServerFn(getWalletBalance);
+  const topUp = useServerFn(startWalletTopUp);
+  const { data: wallet } = useQuery({
+    queryKey: ["wallet-balance"],
+    enabled: Boolean(user?.id),
+    queryFn: () => fetchBalance(),
+  });
 
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState("10000");
+
+  const topUpMutation = useMutation({
+    mutationFn: (provider: "paystack" | "flutterwave") =>
+      topUp({ data: { provider, amount: Number(topUpAmount), currency: wallet?.currency ?? "NGN" } }),
+    onSuccess: (result) => {
+      toast.info("Opening secure checkout…");
+      window.location.href = result.authorizationUrl;
+    },
+    onError: (error: unknown) => toast.error(error instanceof Error ? error.message : "Could not start checkout"),
+  });
+
+  const heldInEscrow = escrows
+    .filter((item: Escrow) => item.status !== "released")
+    .reduce((total: number, item: Escrow) => total + Number(item.amount), 0);
 
   return (
     <AppShell>
@@ -109,8 +135,8 @@ function WalletPage() {
         <section className="surface-hero rounded-2xl p-5 text-primary-foreground shadow-lift">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-primary-foreground/70">Protected balance</p>
-              <p className="mt-1 text-3xl font-bold">{money(balance)}</p>
+              <p className="text-xs text-primary-foreground/70">Available balance</p>
+              <p className="mt-1 text-3xl font-bold">{money(wallet?.balance ?? 0, wallet?.currency ?? "NGN")}</p>
             </div>
             <span className="flex size-12 items-center justify-center rounded-2xl bg-white/15">
               <Wallet size={24} weight="bold" />
@@ -118,14 +144,22 @@ function WalletPage() {
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
             <div className="rounded-xl bg-white/12 p-3">
+              <p className="text-primary-foreground/70">Held in escrow</p>
+              <p className="font-semibold">{money(heldInEscrow)}</p>
+            </div>
+            <div className="rounded-xl bg-white/12 p-3">
               <p className="text-primary-foreground/70">Escrows</p>
               <p className="font-semibold">{escrows.length}</p>
             </div>
-            <div className="rounded-xl bg-white/12 p-3">
-              <p className="text-primary-foreground/70">Currency</p>
-              <p className="font-semibold">USD</p>
-            </div>
           </div>
+          <Button
+            variant="secondary"
+            className="mt-4 h-11 w-full"
+            onClick={() => setTopUpOpen(true)}
+            disabled={topUpMutation.isPending}
+          >
+            <Plus size={16} /> Top up wallet
+          </Button>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-4 shadow-card">
@@ -192,6 +226,45 @@ function WalletPage() {
           </div>
         </section>
       </main>
+
+      <Dialog open={topUpOpen} onOpenChange={setTopUpOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Top up wallet</DialogTitle>
+            <DialogDescription>
+              Pay securely with your preferred gateway. Your balance can then fund escrows instantly.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Input
+            type="number"
+            min="100"
+            inputMode="decimal"
+            value={topUpAmount}
+            onChange={(event) => setTopUpAmount(event.target.value)}
+            placeholder="Amount"
+            className="h-12"
+          />
+
+          <div className="space-y-2">
+            <Button
+              className="h-12 w-full justify-start"
+              disabled={topUpMutation.isPending || Number(topUpAmount) <= 0}
+              onClick={() => topUpMutation.mutate("paystack")}
+            >
+              <CreditCard size={18} /> Pay with Paystack
+            </Button>
+            <Button
+              variant="outline"
+              className="h-12 w-full justify-start bg-card"
+              disabled={topUpMutation.isPending || Number(topUpAmount) <= 0}
+              onClick={() => topUpMutation.mutate("flutterwave")}
+            >
+              <CreditCard size={18} /> Pay with Flutterwave
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }
