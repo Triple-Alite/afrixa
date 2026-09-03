@@ -126,6 +126,7 @@ export function GigCard({ opportunity }: { opportunity: Opportunity }) {
           {opportunity.delivery_days ? <span>{opportunity.delivery_days}d delivery</span> : null}
         </div>
         <p className="mt-2 text-sm font-semibold">{budgetLabel(opportunity)}</p>
+        <GigStatusBar status={opportunity.status} />
       </div>
     </Link>
   );
