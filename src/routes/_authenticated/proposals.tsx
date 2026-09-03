@@ -197,6 +197,12 @@ function ProposalsPage() {
             >
               <Wallet size={18} /> Use wallet balance ({money(wallet?.balance ?? 0, wallet?.currency ?? "NGN")})
             </Button>
+            <Link
+              to="/payment-setup"
+              className="block pt-1 text-center text-xs text-muted-foreground underline-offset-2 hover:underline"
+            >
+              Manage bank details and checkout method
+            </Link>
           </div>
         </DialogContent>
       </Dialog>
