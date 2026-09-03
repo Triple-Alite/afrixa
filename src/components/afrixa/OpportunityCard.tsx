@@ -68,6 +68,31 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
   );
 }
 
+export function GigStatusBar({ status }: { status: string | null | undefined }) {
+  const meta = GIG_STATUS_META[gigStatus(status)];
+  return (
+    <div className="mt-3">
+      <div className="flex items-center justify-between text-[11px] font-medium">
+        <span className={`rounded-full px-2 py-0.5 font-semibold ${meta.tone}`}>{meta.label}</span>
+        <span className="text-muted-foreground">{meta.progress}%</span>
+      </div>
+      <div
+        role="progressbar"
+        aria-valuenow={meta.progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Gig status: ${meta.label}`}
+        className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted"
+      >
+        <div
+          className={`h-full rounded-full transition-all ${meta.bar}`}
+          style={{ width: `${meta.progress}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function GigCard({ opportunity }: { opportunity: Opportunity }) {
   return (
     <Link
