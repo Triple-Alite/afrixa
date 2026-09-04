@@ -71,6 +71,76 @@ export type Database = {
         }
         Relationships: []
       }
+      contracts: {
+        Row: {
+          client_id: string
+          created_at: string
+          currency: string
+          description: string | null
+          escrow_id: string | null
+          id: string
+          opportunity_id: string | null
+          proposal_id: string | null
+          status: string
+          talent_id: string
+          title: string
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          escrow_id?: string | null
+          id?: string
+          opportunity_id?: string | null
+          proposal_id?: string | null
+          status?: string
+          talent_id: string
+          title?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          escrow_id?: string | null
+          id?: string
+          opportunity_id?: string | null
+          proposal_id?: string | null
+          status?: string
+          talent_id?: string
+          title?: string
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_escrow_id_fkey"
+            columns: ["escrow_id"]
+            isOneToOne: false
+            referencedRelation: "escrows"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -241,6 +311,74 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      milestones: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          contract_id: string
+          created_at: string
+          currency: string
+          deliverable_note: string | null
+          deliverable_url: string | null
+          description: string | null
+          due_date: string | null
+          funded_at: string | null
+          id: string
+          position: number
+          started_at: string | null
+          status: string
+          submitted_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          approved_at?: string | null
+          contract_id: string
+          created_at?: string
+          currency?: string
+          deliverable_note?: string | null
+          deliverable_url?: string | null
+          description?: string | null
+          due_date?: string | null
+          funded_at?: string | null
+          id?: string
+          position?: number
+          started_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          contract_id?: string
+          created_at?: string
+          currency?: string
+          deliverable_note?: string | null
+          deliverable_url?: string | null
+          description?: string | null
+          due_date?: string | null
+          funded_at?: string | null
+          id?: string
+          position?: number
+          started_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestones_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
             referencedColumns: ["id"]
           },
         ]
