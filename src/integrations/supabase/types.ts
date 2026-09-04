@@ -940,8 +940,12 @@ export type Database = {
           escrow_id: string | null
           id: string
           opportunity_id: string
+          portfolio_urls: string[]
+          resume_name: string | null
+          resume_url: string | null
           status: string
           talent_id: string
+          years_experience: string | null
         }
         Insert: {
           bid_amount?: number | null
@@ -952,8 +956,12 @@ export type Database = {
           escrow_id?: string | null
           id?: string
           opportunity_id: string
+          portfolio_urls?: string[]
+          resume_name?: string | null
+          resume_url?: string | null
           status?: string
           talent_id: string
+          years_experience?: string | null
         }
         Update: {
           bid_amount?: number | null
@@ -964,8 +972,12 @@ export type Database = {
           escrow_id?: string | null
           id?: string
           opportunity_id?: string
+          portfolio_urls?: string[]
+          resume_name?: string | null
+          resume_url?: string | null
           status?: string
           talent_id?: string
+          years_experience?: string | null
         }
         Relationships: [
           {
