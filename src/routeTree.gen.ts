@@ -30,6 +30,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedProposalsRouteImport } from './routes/_authenticated/proposals'
 import { Route as AuthenticatedTalentRouteImport } from './routes/_authenticated/talent'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as AuthenticatedCompaniesSlugRouteImport } from './routes/_authenticated/companies.$slug'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 import { Route as AuthenticatedTalentIdRouteImport } from './routes/_authenticated/talent.$id'
@@ -144,6 +145,12 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCompaniesSlugRoute =
+  AuthenticatedCompaniesSlugRouteImport.update({
+    id: '/$slug',
+    path: '/$slug',
+    getParentRoute: () => AuthenticatedCompaniesRoute,
+  } as any)
 const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   id: '/jobs/$id',
   path: '/jobs/$id',
@@ -177,7 +184,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
-  '/companies': typeof AuthenticatedCompaniesRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
   '/wallet': typeof AuthenticatedWalletRoute
+  '/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/talent/$id': typeof AuthenticatedTalentIdRoute
@@ -204,7 +212,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
-  '/companies': typeof AuthenticatedCompaniesRoute
+  '/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -220,6 +228,7 @@ export interface FileRoutesByTo {
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
   '/wallet': typeof AuthenticatedWalletRoute
+  '/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/talent/$id': typeof AuthenticatedTalentIdRoute
@@ -233,7 +242,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
-  '/_authenticated/companies': typeof AuthenticatedCompaniesRoute
+  '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
   '/_authenticated/contracts': typeof AuthenticatedContractsRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
@@ -249,6 +258,7 @@ export interface FileRoutesById {
   '/_authenticated/proposals': typeof AuthenticatedProposalsRoute
   '/_authenticated/talent': typeof AuthenticatedTalentRouteWithChildren
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/_authenticated/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/_authenticated/talent/$id': typeof AuthenticatedTalentIdRoute
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/proposals'
     | '/talent'
     | '/wallet'
+    | '/companies/$slug'
     | '/jobs/$id'
     | '/messages/$id'
     | '/talent/$id'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/proposals'
     | '/talent'
     | '/wallet'
+    | '/companies/$slug'
     | '/jobs/$id'
     | '/messages/$id'
     | '/talent/$id'
@@ -333,6 +345,7 @@ export interface FileRouteTypes {
     | '/_authenticated/proposals'
     | '/_authenticated/talent'
     | '/_authenticated/wallet'
+    | '/_authenticated/companies/$slug'
     | '/_authenticated/jobs/$id'
     | '/_authenticated/messages/$id'
     | '/_authenticated/talent/$id'
@@ -497,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/companies/$slug': {
+      id: '/_authenticated/companies/$slug'
+      path: '/$slug'
+      fullPath: '/companies/$slug'
+      preLoaderRoute: typeof AuthenticatedCompaniesSlugRouteImport
+      parentRoute: typeof AuthenticatedCompaniesRoute
+    }
     '/_authenticated/jobs/$id': {
       id: '/_authenticated/jobs/$id'
       path: '/jobs/$id'
@@ -535,6 +555,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedCompaniesRouteChildren {
+  AuthenticatedCompaniesSlugRoute: typeof AuthenticatedCompaniesSlugRoute
+}
+
+const AuthenticatedCompaniesRouteChildren: AuthenticatedCompaniesRouteChildren =
+  {
+    AuthenticatedCompaniesSlugRoute: AuthenticatedCompaniesSlugRoute,
+  }
+
+const AuthenticatedCompaniesRouteWithChildren =
+  AuthenticatedCompaniesRoute._addFileChildren(
+    AuthenticatedCompaniesRouteChildren,
+  )
+
 interface AuthenticatedMessagesRouteChildren {
   AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
 }
@@ -562,7 +596,7 @@ const AuthenticatedTalentRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
-  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRoute
+  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
   AuthenticatedContractsRoute: typeof AuthenticatedContractsRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
@@ -584,7 +618,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
-  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRoute,
+  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
   AuthenticatedContractsRoute: AuthenticatedContractsRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
