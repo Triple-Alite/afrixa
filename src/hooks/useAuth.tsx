@@ -21,6 +21,8 @@ export type Profile = {
   profile_strength: number;
   verified: boolean;
   total_earned: number;
+  hourly_rate: number | null;
+  discoverable: boolean;
 };
 
 type AuthValue = {
