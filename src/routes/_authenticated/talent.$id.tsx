@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ChatCircleDots, ShieldCheck } from "@phosphor-icons/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChatCircleDots, ShieldCheck, UserPlus } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -8,8 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { initials } from "@/lib/afrixa";
+import { requestConnection } from "@/lib/social.data";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+
 
 export const Route = createFileRoute("/_authenticated/talent/$id")({
   head: () => ({
