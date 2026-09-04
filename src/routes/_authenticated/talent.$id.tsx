@@ -11,6 +11,8 @@ import { initials } from "@/lib/afrixa";
 import { requestConnection } from "@/lib/social.data";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { ProfileDossierView } from "@/components/afrixa/ProfileDossier";
+import { fetchProfileDossier } from "@/lib/profile.data";
 
 
 export const Route = createFileRoute("/_authenticated/talent/$id")({
@@ -82,6 +84,11 @@ function TalentProfilePage() {
       if (error) throw error;
       return data;
     },
+  });
+
+  const { data: dossier } = useQuery({
+    queryKey: ["dossier", id],
+    queryFn: () => fetchProfileDossier(id),
   });
 
   const { data: portfolio = [] } = useQuery({
@@ -188,6 +195,8 @@ function TalentProfilePage() {
             <p className="mt-2 text-sm text-muted-foreground">{person.bio}</p>
           </section>
         ) : null}
+
+        {dossier ? <ProfileDossierView dossier={dossier} /> : null}
 
         <section>
           <h2 className="text-base font-semibold">Portfolio</h2>
