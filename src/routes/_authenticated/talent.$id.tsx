@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { ChatCircleDots, ShieldCheck } from "@phosphor-icons/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChatCircleDots, ShieldCheck, UserPlus } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -8,8 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { initials } from "@/lib/afrixa";
+import { requestConnection } from "@/lib/social.data";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+
 
 export const Route = createFileRoute("/_authenticated/talent/$id")({
   head: () => ({
@@ -32,7 +34,42 @@ function TalentProfilePage() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [contacting, setContacting] = useState(false);
+
+  const { data: connection } = useQuery({
+    queryKey: ["connection", user?.id, id],
+    enabled: Boolean(user?.id) && user?.id !== id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("connections")
+        .select("id,status,requester_id")
+        .or(
+          `and(requester_id.eq.${user!.id},addressee_id.eq.${id}),and(requester_id.eq.${id},addressee_id.eq.${user!.id})`,
+        )
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const connect = useMutation({
+    mutationFn: () => requestConnection(user!.id, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["connection"] });
+      queryClient.invalidateQueries({ queryKey: ["network"] });
+      toast.success("Invitation sent");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const connectLabel =
+    connection?.status === "accepted"
+      ? "Connected"
+      : connection?.status === "pending"
+        ? "Invite pending"
+        : "Connect";
+
 
   const { data: person, isLoading } = useQuery({
     queryKey: ["talent", id],
@@ -177,9 +214,22 @@ function TalentProfilePage() {
           </div>
         </section>
 
-        <Button className="h-12 w-full" disabled={contacting} onClick={() => void contact()}>
-          <ChatCircleDots size={16} /> {contacting ? "Opening chat…" : "Message talent"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="h-12 flex-1" disabled={contacting} onClick={() => void contact()}>
+            <ChatCircleDots size={16} /> {contacting ? "Opening chat…" : "Message talent"}
+          </Button>
+          {user?.id !== id ? (
+            <Button
+              variant="outline"
+              className="h-12 flex-1"
+              disabled={Boolean(connection) || connect.isPending}
+              onClick={() => connect.mutate()}
+            >
+              <UserPlus size={16} /> {connect.isPending ? "Sending…" : connectLabel}
+            </Button>
+          ) : null}
+        </div>
+
       </main>
     </AppShell>
   );

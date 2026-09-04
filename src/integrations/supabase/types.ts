@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      connections: {
+        Row: {
+          addressee_id: string
+          created_at: string
+          id: string
+          message: string | null
+          requester_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          addressee_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          addressee_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requester_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -158,6 +188,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
       }
       messages: {
         Row: {
@@ -446,6 +497,115 @@ export type Database = {
         }
         Relationships: []
       }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reaction?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          author_id: string
+          body: string
+          comment_count: number
+          created_at: string
+          id: string
+          image_url: string | null
+          kind: string
+          link_url: string | null
+          reaction_count: number
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          body?: string
+          comment_count?: number
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          link_url?: string | null
+          reaction_count?: number
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          comment_count?: number
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          link_url?: string | null
+          reaction_count?: number
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -453,6 +613,7 @@ export type Database = {
           business_name: string | null
           client_type: string | null
           country: string | null
+          cover_url: string | null
           created_at: string
           discoverable: boolean
           full_name: string
@@ -464,6 +625,7 @@ export type Database = {
           preferred_gateway: string | null
           primary_skill: string | null
           profile_strength: number
+          profile_views: number
           role: Database["public"]["Enums"]["app_user_role"] | null
           total_earned: number
           updated_at: string
@@ -477,6 +639,7 @@ export type Database = {
           business_name?: string | null
           client_type?: string | null
           country?: string | null
+          cover_url?: string | null
           created_at?: string
           discoverable?: boolean
           full_name?: string
@@ -488,6 +651,7 @@ export type Database = {
           preferred_gateway?: string | null
           primary_skill?: string | null
           profile_strength?: number
+          profile_views?: number
           role?: Database["public"]["Enums"]["app_user_role"] | null
           total_earned?: number
           updated_at?: string
@@ -501,6 +665,7 @@ export type Database = {
           business_name?: string | null
           client_type?: string | null
           country?: string | null
+          cover_url?: string | null
           created_at?: string
           discoverable?: boolean
           full_name?: string
@@ -512,6 +677,7 @@ export type Database = {
           preferred_gateway?: string | null
           primary_skill?: string | null
           profile_strength?: number
+          profile_views?: number
           role?: Database["public"]["Enums"]["app_user_role"] | null
           total_earned?: number
           updated_at?: string
@@ -575,6 +741,30 @@ export type Database = {
           },
         ]
       }
+      saved_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -610,7 +800,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      are_connected: { Args: { _a: string; _b: string }; Returns: boolean }
+      can_view_post: { Args: { _post_id: string }; Returns: boolean }
     }
     Enums: {
       app_user_role: "talent" | "client"
