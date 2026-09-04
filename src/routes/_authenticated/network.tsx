@@ -79,8 +79,69 @@ function PersonRow({
   );
 }
 
+function RecommendedGigs({ userId }: { userId: string }) {
+  const { data: signals } = useQuery({
+    queryKey: ["talent-signals", userId],
+    queryFn: () => fetchTalentSignals(userId),
+  });
+  const { data: gigs } = useQuery({ queryKey: ["open-gigs"], queryFn: () => fetchOpenGigs() });
+
+  const ranked = signals && gigs ? rankGigs(gigs, signals).slice(0, 4) : [];
+  const hasSignals =
+    signals &&
+    (signals.skills.length > 0 ||
+      signals.experienceText.length > 0 ||
+      signals.portfolioCategories.length > 0 ||
+      signals.primarySkill);
+
+  if (!hasSignals) {
+    return (
+      <section className="space-y-2">
+        <h2 className="text-sm font-semibold">Recommended gigs for me</h2>
+        <div className="rounded-2xl border border-dashed border-border p-6 text-center">
+          <p className="text-sm font-semibold">Tell us what you do</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add your skills, experience and portfolio and we will match gigs to you.
+          </p>
+          <Link to="/profile" className="mt-3 inline-block text-xs font-semibold text-primary">
+            Complete my profile
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold">Recommended gigs for me</h2>
+        <Link to="/explore" className="text-xs font-semibold text-primary">
+          See all
+        </Link>
+      </div>
+      {ranked.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground">
+          No close matches right now — check back soon.
+        </p>
+      ) : (
+        ranked.map((item) => (
+          <div key={item.opportunity.id} className="space-y-1.5">
+            <OpportunityCard opportunity={item.opportunity} />
+            <p className="flex items-center gap-2 px-1 text-[11px] text-muted-foreground">
+              <span className="rounded-full bg-secondary/12 px-2 py-0.5 font-semibold text-secondary">
+                {matchPercent(item.score)}% match
+              </span>
+              <span className="truncate">{item.reasons.slice(0, 2).join(" • ")}</span>
+            </p>
+          </div>
+        ))
+      )}
+    </section>
+  );
+}
+
 function NetworkPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
