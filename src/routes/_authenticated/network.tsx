@@ -223,8 +223,26 @@ function NetworkPage() {
           </section>
         ) : null}
 
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            to="/companies"
+            className="rounded-2xl border border-border bg-card p-4 text-sm font-semibold shadow-card"
+          >
+            Companies
+            <span className="mt-0.5 block text-xs font-normal text-muted-foreground">Teams hiring now</span>
+          </Link>
+          <Link
+            to="/talent"
+            className="rounded-2xl border border-border bg-card p-4 text-sm font-semibold shadow-card"
+          >
+            Talent
+            <span className="mt-0.5 block text-xs font-normal text-muted-foreground">Browse professionals</span>
+          </Link>
+        </div>
+
         <section className="space-y-2">
           <h2 className="text-sm font-semibold">Connections</h2>
+
           {connected.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border p-6 text-center">
               <p className="text-sm font-semibold">No connections yet</p>

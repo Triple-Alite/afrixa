@@ -77,6 +77,57 @@ export type Database = {
         }
         Relationships: []
       }
+      companies: {
+        Row: {
+          about: string | null
+          company_size: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          industry: string | null
+          location: string | null
+          logo_url: string | null
+          name: string
+          owner_id: string
+          slug: string
+          tagline: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          about?: string | null
+          company_size?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          slug: string
+          tagline?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          about?: string | null
+          company_size?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          industry?: string | null
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          slug?: string
+          tagline?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       connections: {
         Row: {
           addressee_id: string
@@ -495,6 +546,7 @@ export type Database = {
           category: string
           client_id: string | null
           company: string
+          company_id: string | null
           country: string | null
           created_at: string
           currency: string
@@ -520,6 +572,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           company?: string
+          company_id?: string | null
           country?: string | null
           created_at?: string
           currency?: string
@@ -545,6 +598,7 @@ export type Database = {
           category?: string
           client_id?: string | null
           company?: string
+          company_id?: string | null
           country?: string | null
           created_at?: string
           currency?: string
@@ -564,7 +618,15 @@ export type Database = {
           title?: string
           work_mode?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {
