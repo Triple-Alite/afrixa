@@ -5,6 +5,7 @@ import {
   House,
   Plus,
   UserCircle,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { CaretLeft } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
@@ -15,9 +16,11 @@ const NAV = [
   { to: "/home", label: "Home", Icon: House },
   { to: "/explore", label: "Explore", Icon: Compass },
   { to: "/gigs", label: "Gigs", Icon: Plus },
-  { to: "/messages", label: "Messages", Icon: ChatCircleDots },
+  { to: "/feed", label: "Community", Icon: UsersThree },
+  { to: "/messages", label: "Chats", Icon: ChatCircleDots },
   { to: "/profile", label: "Profile", Icon: UserCircle },
 ] as const;
+
 
 export function BottomNav() {
   return (
