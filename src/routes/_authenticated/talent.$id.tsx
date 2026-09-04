@@ -214,9 +214,22 @@ function TalentProfilePage() {
           </div>
         </section>
 
-        <Button className="h-12 w-full" disabled={contacting} onClick={() => void contact()}>
-          <ChatCircleDots size={16} /> {contacting ? "Opening chat…" : "Message talent"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="h-12 flex-1" disabled={contacting} onClick={() => void contact()}>
+            <ChatCircleDots size={16} /> {contacting ? "Opening chat…" : "Message talent"}
+          </Button>
+          {user?.id !== id ? (
+            <Button
+              variant="outline"
+              className="h-12 flex-1"
+              disabled={Boolean(connection) || connect.isPending}
+              onClick={() => connect.mutate()}
+            >
+              <UserPlus size={16} /> {connect.isPending ? "Sending…" : connectLabel}
+            </Button>
+          ) : null}
+        </div>
+
       </main>
     </AppShell>
   );
