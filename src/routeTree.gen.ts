@@ -19,6 +19,7 @@ import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/f
 import { Route as AuthenticatedGigsRouteImport } from './routes/_authenticated/gigs'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
+import { Route as AuthenticatedNetworkRouteImport } from './routes/_authenticated/network'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedPaymentCallbackRouteImport } from './routes/_authenticated/payment-callback'
@@ -81,6 +82,11 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
 const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
   id: '/messages',
   path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNetworkRoute = AuthenticatedNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNotificationsRoute =
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/gigs': typeof AuthenticatedGigsRoute
   '/home': typeof AuthenticatedHomeRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/network': typeof AuthenticatedNetworkRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/payment-callback': typeof AuthenticatedPaymentCallbackRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/gigs': typeof AuthenticatedGigsRoute
   '/home': typeof AuthenticatedHomeRoute
   '/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/network': typeof AuthenticatedNetworkRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/payment-callback': typeof AuthenticatedPaymentCallbackRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/_authenticated/gigs': typeof AuthenticatedGigsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/_authenticated/network': typeof AuthenticatedNetworkRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/payment-callback': typeof AuthenticatedPaymentCallbackRoute
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/gigs'
     | '/home'
     | '/messages'
+    | '/network'
     | '/notifications'
     | '/onboarding'
     | '/payment-callback'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/gigs'
     | '/home'
     | '/messages'
+    | '/network'
     | '/notifications'
     | '/onboarding'
     | '/payment-callback'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gigs'
     | '/_authenticated/home'
     | '/_authenticated/messages'
+    | '/_authenticated/network'
     | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
     | '/_authenticated/payment-callback'
@@ -382,6 +394,13 @@ declare module '@tanstack/react-router' {
       path: '/messages'
       fullPath: '/messages'
       preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/network': {
+      id: '/_authenticated/network'
+      path: '/network'
+      fullPath: '/network'
+      preLoaderRoute: typeof AuthenticatedNetworkRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/notifications': {
@@ -510,6 +529,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedGigsRoute: typeof AuthenticatedGigsRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
+  AuthenticatedNetworkRoute: typeof AuthenticatedNetworkRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPaymentCallbackRoute: typeof AuthenticatedPaymentCallbackRoute
@@ -529,6 +549,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedGigsRoute: AuthenticatedGigsRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
+  AuthenticatedNetworkRoute: AuthenticatedNetworkRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPaymentCallbackRoute: AuthenticatedPaymentCallbackRoute,
