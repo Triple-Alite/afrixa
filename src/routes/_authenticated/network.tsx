@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { initials } from "@/lib/afrixa";
 import { fetchNetwork, respondToConnection } from "@/lib/social.data";
 import { fetchSkillsForPeople } from "@/lib/profile.data";
+import { OpportunityCard } from "@/components/afrixa/OpportunityCard";
+import { fetchOpenGigs, fetchTalentSignals, matchPercent, rankGigs } from "@/lib/recommend";
 import type { PostAuthor } from "@/lib/social";
 
 export const Route = createFileRoute("/_authenticated/network")({
@@ -188,6 +190,8 @@ function NetworkPage() {
         {isLoading ? (
           <p className="py-10 text-center text-sm text-muted-foreground">Loading your network…</p>
         ) : null}
+
+        {user?.id && profile?.role !== "client" ? <RecommendedGigs userId={user.id} /> : null}
 
         {incoming.length > 0 ? (
           <section className="space-y-2">
