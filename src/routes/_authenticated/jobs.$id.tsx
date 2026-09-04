@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { uploadUserFile } from "@/lib/uploads";
 
 export const Route = createFileRoute("/_authenticated/jobs/$id")({
   head: () => ({
@@ -42,6 +43,40 @@ function JobDetailPage() {
   const [cover, setCover] = useState("");
   const [bid, setBid] = useState("");
   const [days, setDays] = useState("");
+  const [years, setYears] = useState("");
+  const [resume, setResume] = useState<{ url: string; name: string } | null>(null);
+  const [samples, setSamples] = useState<{ url: string; name: string }[]>([]);
+  const [uploading, setUploading] = useState<null | "resume" | "samples">(null);
+
+  async function handleUpload(kind: "resume" | "samples", files: FileList | null) {
+    if (!files?.length || !user) return;
+    const tooBig = [...files].find((file) => file.size > 10 * 1024 * 1024);
+    if (tooBig) {
+      toast.error("Each file must be smaller than 10MB");
+      return;
+    }
+    setUploading(kind);
+    try {
+      if (kind === "resume") {
+        const file = files[0]!;
+        const url = await uploadUserFile("portfolio", user.id, file);
+        setResume({ url, name: file.name });
+      } else {
+        const uploaded = await Promise.all(
+          [...files].slice(0, 5).map(async (file) => ({
+            url: await uploadUserFile("portfolio", user.id, file),
+            name: file.name,
+          })),
+        );
+        setSamples((prev) => [...prev, ...uploaded].slice(0, 5));
+      }
+      toast.success("File attached");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setUploading(null);
+    }
+  }
 
   const { data: job, isLoading } = useQuery({
     queryKey: ["opportunity", id],
@@ -97,6 +132,10 @@ function JobDetailPage() {
         bid_amount: bid ? Number(bid) : null,
         currency: job.currency,
         delivery_days: days ? Number(days) : null,
+        resume_url: resume?.url ?? null,
+        resume_name: resume?.name ?? null,
+        portfolio_urls: samples.map((item) => item.url),
+        years_experience: years.trim() || null,
       });
       if (error) throw error;
     },
@@ -287,16 +326,64 @@ function JobDetailPage() {
                 />
               </div>
             </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="years">Years of relevant experience</Label>
+              <Input
+                id="years"
+                value={years}
+                onChange={(event) => setYears(event.target.value)}
+                placeholder="e.g. 4 years"
+                maxLength={40}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="resume">Resume / CV</Label>
+              <Input
+                id="resume"
+                type="file"
+                accept=".pdf,.doc,.docx"
+                disabled={uploading !== null}
+                onChange={(event) => handleUpload("resume", event.target.files)}
+              />
+              {resume ? (
+                <p className="truncate text-[11px] text-secondary">Attached: {resume.name}</p>
+              ) : (
+                <p className="text-[11px] text-muted-foreground">PDF or Word, up to 10MB.</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="samples">Portfolio samples (up to 5)</Label>
+              <Input
+                id="samples"
+                type="file"
+                multiple
+                accept="image/*,.pdf"
+                disabled={uploading !== null}
+                onChange={(event) => handleUpload("samples", event.target.files)}
+              />
+              {samples.length ? (
+                <ul className="space-y-0.5">
+                  {samples.map((item) => (
+                    <li key={item.url} className="truncate text-[11px] text-secondary">
+                      Attached: {item.name}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
               <Button
                 className="flex-1"
-                disabled={apply.isPending || cover.trim().length < 20}
+                disabled={apply.isPending || uploading !== null || cover.trim().length < 20}
                 onClick={() => apply.mutate()}
               >
-                {apply.isPending ? "Sending…" : "Submit"}
+                {uploading ? "Uploading…" : apply.isPending ? "Sending…" : "Submit application"}
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground">
