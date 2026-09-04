@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
 import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
+import { Route as AuthenticatedContractsRouteImport } from './routes/_authenticated/contracts'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedGigsRouteImport } from './routes/_authenticated/gigs'
@@ -57,6 +58,11 @@ const AuthenticatedApplicationsRoute =
 const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContractsRoute = AuthenticatedContractsRouteImport.update({
+  id: '/contracts',
+  path: '/contracts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedExploreRoute = AuthenticatedExploreRouteImport.update({
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/gigs': typeof AuthenticatedGigsRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/gigs': typeof AuthenticatedGigsRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
+  '/_authenticated/contracts': typeof AuthenticatedContractsRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/gigs': typeof AuthenticatedGigsRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/applications'
     | '/assessment'
+    | '/contracts'
     | '/explore'
     | '/feed'
     | '/gigs'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/applications'
     | '/assessment'
+    | '/contracts'
     | '/explore'
     | '/feed'
     | '/gigs'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/applications'
     | '/_authenticated/assessment'
+    | '/_authenticated/contracts'
     | '/_authenticated/explore'
     | '/_authenticated/feed'
     | '/_authenticated/gigs'
@@ -359,6 +371,13 @@ declare module '@tanstack/react-router' {
       path: '/assessment'
       fullPath: '/assessment'
       preLoaderRoute: typeof AuthenticatedAssessmentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contracts': {
+      id: '/_authenticated/contracts'
+      path: '/contracts'
+      fullPath: '/contracts'
+      preLoaderRoute: typeof AuthenticatedContractsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/explore': {
@@ -524,6 +543,7 @@ const AuthenticatedTalentRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
+  AuthenticatedContractsRoute: typeof AuthenticatedContractsRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedGigsRoute: typeof AuthenticatedGigsRoute
@@ -544,6 +564,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
+  AuthenticatedContractsRoute: AuthenticatedContractsRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedGigsRoute: AuthenticatedGigsRoute,
