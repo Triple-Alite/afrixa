@@ -41,6 +41,42 @@ export type Database = {
         }
         Relationships: []
       }
+      certifications: {
+        Row: {
+          created_at: string
+          credential_url: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuer: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuer: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuer?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       connections: {
         Row: {
           addressee_id: string
@@ -165,6 +201,42 @@ export type Database = {
           participant_a?: string
           participant_b?: string
           subject?: string | null
+        }
+        Relationships: []
+      }
+      education_entries: {
+        Row: {
+          created_at: string
+          end_year: number | null
+          field_of_study: string | null
+          id: string
+          qualification: string | null
+          school: string
+          start_year: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_year?: number | null
+          field_of_study?: string | null
+          id?: string
+          qualification?: string | null
+          school: string
+          start_year?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_year?: number | null
+          field_of_study?: string | null
+          id?: string
+          qualification?: string | null
+          school?: string
+          start_year?: number | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -744,6 +816,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_skills: {
+        Row: {
+          created_at: string
+          id: string
+          level: string
+          name: string
+          position: number
+          updated_at: string
+          user_id: string
+          years: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          level?: string
+          name: string
+          position?: number
+          updated_at?: string
+          user_id: string
+          years?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level?: string
+          name?: string
+          position?: number
+          updated_at?: string
+          user_id?: string
+          years?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -929,6 +1034,51 @@ export type Database = {
           description?: string | null
           id?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      work_experiences: {
+        Row: {
+          company: string
+          created_at: string
+          employment_type: string | null
+          end_date: string | null
+          id: string
+          is_current: boolean
+          location: string | null
+          start_date: string
+          summary: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          employment_type?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean
+          location?: string | null
+          start_date: string
+          summary?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          employment_type?: string | null
+          end_date?: string | null
+          id?: string
+          is_current?: boolean
+          location?: string | null
+          start_date?: string
+          summary?: string | null
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
