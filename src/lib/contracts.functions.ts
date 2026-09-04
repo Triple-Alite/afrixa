@@ -42,6 +42,7 @@ export type ContractSummary = {
   client_id: string;
   talent_id: string;
   opportunity_id: string | null;
+  proposal_id: string | null;
   counterparty_name: string;
   counterparty_headline: string | null;
   role: "client" | "talent";
@@ -107,6 +108,7 @@ export const listMyContracts = createServerFn({ method: "GET" })
         client_id: contract.client_id,
         talent_id: contract.talent_id,
         opportunity_id: contract.opportunity_id,
+        proposal_id: contract.proposal_id,
         counterparty_name: person?.full_name || "Afrixa member",
         counterparty_headline: person?.headline ?? null,
         role: contract.client_id === userId ? "client" : "talent",
