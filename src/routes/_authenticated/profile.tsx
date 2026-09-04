@@ -13,6 +13,7 @@ import { initials, money } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { ProfileDossierEditor } from "@/components/afrixa/ProfileDossierEditor";
 import { Progress } from "@/components/ui/progress";
 
 
@@ -252,6 +253,14 @@ function ProfilePage() {
             </div>
             <Switch checked={discoverable} onCheckedChange={(next) => void toggleDiscoverable(next)} />
           </section>
+        )}
+
+        {profile?.role === "client" ? null : (
+          <ProfileDossierEditor
+            userId={user!.id}
+            hourlyRate={profile?.hourly_rate ?? null}
+            onRateSaved={refreshProfile}
+          />
         )}
 
         <section>

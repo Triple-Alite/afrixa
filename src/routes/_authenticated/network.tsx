@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { initials } from "@/lib/afrixa";
 import { fetchNetwork, respondToConnection } from "@/lib/social.data";
+import { fetchSkillsForPeople } from "@/lib/profile.data";
 import type { PostAuthor } from "@/lib/social";
 
 export const Route = createFileRoute("/_authenticated/network")({
@@ -34,10 +35,12 @@ export const Route = createFileRoute("/_authenticated/network")({
 function PersonRow({
   person,
   fallbackId,
+  skills,
   children,
 }: {
   person: PostAuthor | null;
   fallbackId: string;
+  skills?: string[];
   children?: React.ReactNode;
 }) {
   return (
@@ -57,6 +60,18 @@ function PersonRow({
         <p className="truncate text-xs text-muted-foreground">
           {person?.headline ?? person?.primary_skill ?? "Afrixa community"}
         </p>
+        {skills && skills.length > 0 ? (
+          <ul className="mt-1 flex flex-wrap gap-1">
+            {skills.map((skill) => (
+              <li
+                key={skill}
+                className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+              >
+                {skill}
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
       <div className="flex shrink-0 items-center gap-1.5">{children ?? null}</div>
       <span className="hidden">{fallbackId}</span>
@@ -85,7 +100,22 @@ function NetworkPage() {
     onError: (error: Error) => toast.error(error.message),
   });
 
+  const peopleIds = [
+    ...new Set(
+      [...(data?.incoming ?? []), ...(data?.outgoing ?? []), ...(data?.connected ?? [])].map((row) =>
+        row.requester_id === user?.id ? row.addressee_id : row.requester_id,
+      ),
+    ),
+  ];
+
+  const { data: skillMap } = useQuery({
+    queryKey: ["network-skills", peopleIds],
+    enabled: peopleIds.length > 0,
+    queryFn: () => fetchSkillsForPeople(peopleIds),
+  });
+
   const incoming = data?.incoming ?? [];
+
   const outgoing = data?.outgoing ?? [];
   const connected = data?.connected ?? [];
 
@@ -102,7 +132,12 @@ function NetworkPage() {
           <section className="space-y-2">
             <h2 className="text-sm font-semibold">Invitations ({incoming.length})</h2>
             {incoming.map((row) => (
-              <PersonRow key={row.id} person={row.person} fallbackId={row.requester_id}>
+              <PersonRow
+                key={row.id}
+                person={row.person}
+                fallbackId={row.requester_id}
+                skills={skillMap?.get(row.requester_id) ?? []}
+              >
                 <Button
                   size="sm"
                   variant="outline"
@@ -142,7 +177,12 @@ function NetworkPage() {
             connected.map((row) => {
               const otherId = row.requester_id === user?.id ? row.addressee_id : row.requester_id;
               return (
-                <PersonRow key={row.id} person={row.person} fallbackId={otherId}>
+                <PersonRow
+                  key={row.id}
+                  person={row.person}
+                  fallbackId={otherId}
+                  skills={skillMap?.get(otherId) ?? []}
+                >
                   <Link
                     to="/messages"
                     aria-label="Message"
@@ -167,7 +207,12 @@ function NetworkPage() {
           <section className="space-y-2">
             <h2 className="text-sm font-semibold">Sent invites</h2>
             {outgoing.map((row) => (
-              <PersonRow key={row.id} person={row.person} fallbackId={row.addressee_id}>
+              <PersonRow
+                key={row.id}
+                person={row.person}
+                fallbackId={row.addressee_id}
+                skills={skillMap?.get(row.addressee_id) ?? []}
+              >
                 <span className="text-xs text-muted-foreground">Pending</span>
               </PersonRow>
             ))}
