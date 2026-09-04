@@ -135,6 +135,19 @@ function HomePage() {
           </div>
         )}
 
+        <Link
+          to="/contracts"
+          className="block rounded-2xl border border-border bg-card p-4 shadow-card"
+        >
+          <p className="text-sm font-semibold">Contracts &amp; milestones</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {profile?.role === "client"
+              ? "Fund each step and approve delivered work"
+              : "Track funded milestones and submit your work"}
+          </p>
+        </Link>
+
+
 
         </div>
 
