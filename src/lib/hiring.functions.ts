@@ -18,6 +18,10 @@ export type ClientProposal = {
   talent_name: string;
   talent_headline: string | null;
   talent_country: string | null;
+  resume_url: string | null;
+  resume_name: string | null;
+  portfolio_urls: string[];
+  years_experience: string | null;
 };
 
 /** Proposals submitted to the signed-in client's own postings. */
@@ -37,7 +41,9 @@ export const listClientProposals = createServerFn({ method: "GET" })
 
     const { data: proposals, error } = await supabase
       .from("proposals")
-      .select("id,status,cover_letter,bid_amount,currency,delivery_days,created_at,escrow_id,opportunity_id,talent_id")
+      .select(
+        "id,status,cover_letter,bid_amount,currency,delivery_days,created_at,escrow_id,opportunity_id,talent_id,resume_url,resume_name,portfolio_urls,years_experience",
+      )
       .in("opportunity_id", [...titles.keys()])
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
@@ -58,6 +64,7 @@ export const listClientProposals = createServerFn({ method: "GET" })
         talent_name: talent?.full_name || "Afrixa talent",
         talent_headline: talent?.headline ?? null,
         talent_country: talent?.country ?? null,
+        portfolio_urls: p.portfolio_urls ?? [],
       };
     });
   });
