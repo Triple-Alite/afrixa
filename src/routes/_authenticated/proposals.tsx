@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle, CreditCard, Wallet, XCircle } from "@phosphor-icons/react";
+import { CheckCircle, CreditCard, Paperclip, Wallet, XCircle } from "@phosphor-icons/react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -125,6 +125,37 @@ function ProposalsPage() {
               </div>
 
               <p className="mt-3 line-clamp-4 text-xs text-muted-foreground">{proposal.cover_letter}</p>
+
+              {proposal.resume_url || proposal.portfolio_urls.length || proposal.years_experience ? (
+                <div className="mt-3 space-y-1.5 rounded-xl bg-muted/50 p-3">
+                  {proposal.years_experience ? (
+                    <p className="text-[11px] text-muted-foreground">
+                      Experience: <span className="font-medium">{proposal.years_experience}</span>
+                    </p>
+                  ) : null}
+                  {proposal.resume_url ? (
+                    <a
+                      href={proposal.resume_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-primary"
+                    >
+                      <Paperclip size={14} /> {proposal.resume_name ?? "Resume / CV"}
+                    </a>
+                  ) : null}
+                  {proposal.portfolio_urls.map((url, index) => (
+                    <a
+                      key={url}
+                      href={url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-xs text-primary"
+                    >
+                      <Paperclip size={14} /> Portfolio sample {index + 1}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
 
               <div className="mt-3 flex items-center gap-3 text-xs">
                 <span className="font-semibold">
