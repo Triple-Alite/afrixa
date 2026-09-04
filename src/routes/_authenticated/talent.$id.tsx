@@ -34,7 +34,42 @@ function TalentProfilePage() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [contacting, setContacting] = useState(false);
+
+  const { data: connection } = useQuery({
+    queryKey: ["connection", user?.id, id],
+    enabled: Boolean(user?.id) && user?.id !== id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("connections")
+        .select("id,status,requester_id")
+        .or(
+          `and(requester_id.eq.${user!.id},addressee_id.eq.${id}),and(requester_id.eq.${id},addressee_id.eq.${user!.id})`,
+        )
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const connect = useMutation({
+    mutationFn: () => requestConnection(user!.id, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["connection"] });
+      queryClient.invalidateQueries({ queryKey: ["network"] });
+      toast.success("Invitation sent");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const connectLabel =
+    connection?.status === "accepted"
+      ? "Connected"
+      : connection?.status === "pending"
+        ? "Invite pending"
+        : "Connect";
+
 
   const { data: person, isLoading } = useQuery({
     queryKey: ["talent", id],
