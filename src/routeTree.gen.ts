@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated/applications'
 import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
+import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated/companies'
 import { Route as AuthenticatedContractsRouteImport } from './routes/_authenticated/contracts'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
@@ -58,6 +59,11 @@ const AuthenticatedApplicationsRoute =
 const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCompaniesRoute = AuthenticatedCompaniesRouteImport.update({
+  id: '/companies',
+  path: '/companies',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedContractsRoute = AuthenticatedContractsRouteImport.update({
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/companies': typeof AuthenticatedCompaniesRoute
   '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/applications': typeof AuthenticatedApplicationsRoute
   '/assessment': typeof AuthenticatedAssessmentRoute
+  '/companies': typeof AuthenticatedCompaniesRoute
   '/contracts': typeof AuthenticatedContractsRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
+  '/_authenticated/companies': typeof AuthenticatedCompaniesRoute
   '/_authenticated/contracts': typeof AuthenticatedContractsRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/applications'
     | '/assessment'
+    | '/companies'
     | '/contracts'
     | '/explore'
     | '/feed'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/applications'
     | '/assessment'
+    | '/companies'
     | '/contracts'
     | '/explore'
     | '/feed'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/applications'
     | '/_authenticated/assessment'
+    | '/_authenticated/companies'
     | '/_authenticated/contracts'
     | '/_authenticated/explore'
     | '/_authenticated/feed'
@@ -371,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/assessment'
       fullPath: '/assessment'
       preLoaderRoute: typeof AuthenticatedAssessmentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/companies': {
+      id: '/_authenticated/companies'
+      path: '/companies'
+      fullPath: '/companies'
+      preLoaderRoute: typeof AuthenticatedCompaniesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/contracts': {
@@ -543,6 +562,7 @@ const AuthenticatedTalentRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
+  AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRoute
   AuthenticatedContractsRoute: typeof AuthenticatedContractsRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
@@ -564,6 +584,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
+  AuthenticatedCompaniesRoute: AuthenticatedCompaniesRoute,
   AuthenticatedContractsRoute: AuthenticatedContractsRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
