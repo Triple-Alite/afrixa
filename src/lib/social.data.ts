@@ -141,3 +141,82 @@ export async function respondToConnection(id: string, status: "accepted" | "decl
   const { error } = await supabase.from("connections").update({ status }).eq("id", id);
   if (error) throw error;
 }
+
+export type PersonSuggestion = PostAuthor & {
+  country: string | null;
+  connection: "none" | "pending" | "connected";
+  following: boolean;
+};
+
+export async function fetchPeople(userId: string, term: string): Promise<PersonSuggestion[]> {
+  let query = supabase
+    .from("profiles")
+    .select(`${AUTHOR_COLUMNS},country`)
+    .neq("id", userId)
+    .limit(40);
+  if (term.trim()) {
+    const like = `%${term.trim()}%`;
+    query = query.or(`full_name.ilike.${like},headline.ilike.${like},primary_skill.ilike.${like}`);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  const people = (data ?? []) as (PostAuthor & { country: string | null })[];
+  if (people.length === 0) return [];
+
+  const [{ data: conns }, { data: follows }] = await Promise.all([
+    supabase.from("connections").select("requester_id,addressee_id,status"),
+    supabase.from("follows").select("following_id").eq("follower_id", userId),
+  ]);
+
+  const connState = new Map<string, "pending" | "connected">();
+  for (const row of conns ?? []) {
+    const other = row.requester_id === userId ? row.addressee_id : row.requester_id;
+    if (row.requester_id !== userId && row.addressee_id !== userId) continue;
+    if (row.status === "accepted") connState.set(other, "connected");
+    else if (row.status === "pending" && !connState.has(other)) connState.set(other, "pending");
+  }
+  const followSet = new Set((follows ?? []).map((row) => row.following_id));
+
+  return people.map((person) => ({
+    ...person,
+    connection: connState.get(person.id) ?? "none",
+    following: followSet.has(person.id),
+  }));
+}
+
+export async function toggleFollow(userId: string, targetId: string, following: boolean) {
+  if (following) {
+    const { error } = await supabase
+      .from("follows")
+      .delete()
+      .eq("follower_id", userId)
+      .eq("following_id", targetId);
+    if (error) throw error;
+    return false;
+  }
+  const { error } = await supabase
+    .from("follows")
+    .insert({ follower_id: userId, following_id: targetId });
+  if (error) throw error;
+  return true;
+}
+
+export async function openDirectConversation(userId: string, otherId: string): Promise<string> {
+  const { data: existing, error } = await supabase
+    .from("conversations")
+    .select("id,participant_a,participant_b")
+    .or(
+      `and(participant_a.eq.${userId},participant_b.eq.${otherId}),and(participant_a.eq.${otherId},participant_b.eq.${userId})`,
+    )
+    .limit(1);
+  if (error) throw error;
+  const found = existing?.[0];
+  if (found) return found.id;
+  const { data: created, error: insertError } = await supabase
+    .from("conversations")
+    .insert({ participant_a: userId, participant_b: otherId })
+    .select("id")
+    .single();
+  if (insertError) throw insertError;
+  return created.id;
+}
