@@ -103,6 +103,7 @@ function HomePage() {
             <p className="mt-1 text-xl font-bold text-secondary">
               {profile?.profile_strength ?? 0}%
             </p>
+          </div>
         </div>
 
         {profile?.role === "client" ? (
