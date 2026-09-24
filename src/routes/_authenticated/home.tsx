@@ -165,7 +165,7 @@ function HomePage() {
           ))}
         </div>
 
-        {gigs.length ? (
+        {profile?.role !== "client" && gigs.length ? (
           <section>
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold">Popular gigs</h2>
@@ -181,25 +181,27 @@ function HomePage() {
           </section>
         ) : null}
 
-        <section>
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold">Matched for you</h2>
-            <Link to="/explore" className="text-xs font-medium text-secondary">
-              See all
-            </Link>
-          </div>
-          <div className="mt-3 space-y-3">
-            {isLoading ? (
-              <p className="text-sm text-muted-foreground">Loading opportunities…</p>
-            ) : jobs.length ? (
-              jobs.map((job) => <OpportunityCard key={job.id} opportunity={job} />)
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                No opportunities yet. Check back shortly.
-              </p>
-            )}
-          </div>
-        </section>
+        {profile?.role !== "client" ? (
+          <section>
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold">Matched for you</h2>
+              <Link to="/explore" className="text-xs font-medium text-secondary">
+                See all
+              </Link>
+            </div>
+            <div className="mt-3 space-y-3">
+              {isLoading ? (
+                <p className="text-sm text-muted-foreground">Loading opportunities…</p>
+              ) : jobs.length ? (
+                jobs.map((job) => <OpportunityCard key={job.id} opportunity={job} />)
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No opportunities yet. Check back shortly.
+                </p>
+              )}
+            </div>
+          </section>
+        ) : null}
       </div>
     </AppShell>
   );
