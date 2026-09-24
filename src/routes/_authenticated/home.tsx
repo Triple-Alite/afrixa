@@ -103,53 +103,64 @@ function HomePage() {
             <p className="mt-1 text-xl font-bold text-secondary">
               {profile?.profile_strength ?? 0}%
             </p>
+          </div>
         </div>
 
         {profile?.role === "client" ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Link
               to="/proposals"
-              className="rounded-2xl border border-border bg-card p-4 shadow-card"
+              className="rounded-2xl border border-border bg-card px-5 py-4 shadow-card"
             >
               <p className="text-sm font-semibold">Proposals</p>
-              <p className="mt-1 text-xs text-muted-foreground">Review, hire and fund escrow</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Review, hire and fund escrow
+              </p>
             </Link>
-            <Link to="/gigs" className="rounded-2xl border border-border bg-card p-4 shadow-card">
+            <Link
+              to="/gigs"
+              className="rounded-2xl border border-border bg-card px-5 py-4 shadow-card"
+            >
               <p className="text-sm font-semibold">Post a gig</p>
-              <p className="mt-1 text-xs text-muted-foreground">Publish paid work for talent</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Publish paid work for talent
+              </p>
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Link
               to="/applications"
-              className="rounded-2xl border border-border bg-card p-4 shadow-card"
+              className="rounded-2xl border border-border bg-card px-5 py-4 shadow-card"
             >
               <p className="text-sm font-semibold">My applications</p>
-              <p className="mt-1 text-xs text-muted-foreground">Status, hires and delivery</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Status, hires and delivery
+              </p>
             </Link>
-            <Link to="/wallet" className="rounded-2xl border border-border bg-card p-4 shadow-card">
+            <Link
+              to="/wallet"
+              className="rounded-2xl border border-border bg-card px-5 py-4 shadow-card"
+            >
               <p className="text-sm font-semibold">Escrow &amp; payouts</p>
-              <p className="mt-1 text-xs text-muted-foreground">Track funds and releases</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Track funds and releases
+              </p>
             </Link>
           </div>
         )}
 
         <Link
           to="/contracts"
-          className="block rounded-2xl border border-border bg-card p-4 shadow-card"
+          className="block rounded-2xl border border-border bg-card px-5 py-4 shadow-card"
         >
           <p className="text-sm font-semibold">Contracts &amp; milestones</p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             {profile?.role === "client"
               ? "Fund each step and approve delivered work"
               : "Track funded milestones and submit your work"}
           </p>
         </Link>
-
-
-
-        </div>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
           {OPPORTUNITY_STATS.map((stat) => (
