@@ -162,10 +162,6 @@ function HomePage() {
           </p>
         </Link>
 
-
-
-        </div>
-
         <div className="flex gap-2 overflow-x-auto pb-1">
           {OPPORTUNITY_STATS.map((stat) => (
             <Link
