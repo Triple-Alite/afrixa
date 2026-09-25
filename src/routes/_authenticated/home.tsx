@@ -80,8 +80,8 @@ function HomePage() {
         </Link>
       </div>
 
-      <div className="-mt-10 space-y-6 px-4">
       <div className="space-y-6 px-4 pt-6">
+
 
 
         {profile?.role === "client" ? (
