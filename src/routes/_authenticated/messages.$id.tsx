@@ -203,7 +203,7 @@ function ThreadPage() {
 
   function pick(f: File | undefined) {
     if (!f) return;
-    if (f.size > MAX) return toast.error("Files must be 20MB or smaller");
+    if (f.size > MAX) { toast.error("Files must be 20MB or smaller"); return; }
     setFile(f);
   }
 
@@ -218,7 +218,7 @@ function ThreadPage() {
         const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "bin";
         const path = `${id}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage.from("chat-attachments").upload(path, file, {
-          contentType: file.type || undefined,
+          contentType: file.type || "application/octet-stream",
         });
         if (upErr) throw upErr;
         att = { attachment_path: path, attachment_name: file.name, attachment_type: file.type || "application/octet-stream", attachment_size: file.size };
