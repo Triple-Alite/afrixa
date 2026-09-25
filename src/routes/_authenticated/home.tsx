@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppShell } from "@/components/afrixa/AppShell";
 import { NotificationBell } from "@/components/afrixa/NotificationBell";
 import { GigCard, OpportunityCard } from "@/components/afrixa/OpportunityCard";
-import { OPPORTUNITY_STATS, initials, money, type Opportunity } from "@/lib/afrixa";
+import { OPPORTUNITY_STATS, initials, type Opportunity } from "@/lib/afrixa";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
