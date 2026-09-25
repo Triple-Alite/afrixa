@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MagnifyingGlass, SlidersHorizontal } from "@phosphor-icons/react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { GigCard, OpportunityCard } from "@/components/afrixa/OpportunityCard";
 import { COUNTRIES, type Opportunity } from "@/lib/afrixa";
@@ -58,6 +59,14 @@ export const Route = createFileRoute("/_authenticated/explore")({
 function ExplorePage() {
   const { category = "all", q } = Route.useSearch();
   const navigate = Route.useNavigate();
+  const { profile } = useAuth();
+
+  useEffect(() => {
+    if (profile && profile.role === "client") {
+      navigate({ to: "/home", replace: true });
+    }
+  }, [profile, navigate]);
+
   const [query, setQuery] = useState(q ?? "");
   const [country, setCountry] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
