@@ -1,0 +1,2 @@
+ALTER TABLE public.posts DROP CONSTRAINT IF EXISTS posts_kind_check;
+ALTER TABLE public.posts ADD CONSTRAINT posts_kind_check CHECK (kind = ANY (ARRAY['update','article','job','portfolio','announcement','position']));
