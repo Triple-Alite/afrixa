@@ -1,4 +1,4 @@
-export type PostKind = "update" | "article" | "job" | "portfolio" | "announcement";
+export type PostKind = "update" | "article" | "job" | "portfolio" | "announcement" | "position";
 export type PostVisibility = "public" | "connections";
 export type ReactionKind = "like" | "celebrate" | "insightful" | "support" | "curious";
 
@@ -62,6 +62,7 @@ export const POST_KIND_LABEL: Record<string, string> = {
   job: "Hiring",
   article: "Article",
   announcement: "Milestone",
+  position: "New position",
 };
 
 export const REACTIONS: { value: ReactionKind; label: string; emoji: string }[] = [

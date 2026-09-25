@@ -217,3 +217,28 @@ export async function updateHourlyRate(userId: string, rate: number | null) {
   const { error } = await supabase.from("profiles").update({ hourly_rate: rate }).eq("id", userId);
   if (error) throw new Error(error.message);
 }
+
+/** Shares a new position with the network as a feed post, optionally updating the headline. */
+export async function announcePosition(
+  userId: string,
+  input: { title: string; company: string; summary?: string | null; is_current: boolean },
+  opts: { share: boolean; updateHeadline: boolean },
+) {
+  if (opts.updateHeadline) {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ headline: `${input.title} at ${input.company}` })
+      .eq("id", userId);
+    if (error) throw new Error(error.message);
+  }
+  if (opts.share) {
+    const lead = input.is_current
+      ? `I'm happy to share that I'm starting a new position as ${input.title} at ${input.company}!`
+      : `I've added a past role to my profile: ${input.title} at ${input.company}.`;
+    const body = input.summary ? `${lead}\n\n${input.summary}` : lead;
+    const { error } = await supabase
+      .from("posts")
+      .insert({ author_id: userId, body, kind: "position", visibility: "public" });
+    if (error) throw new Error(error.message);
+  }
+}
