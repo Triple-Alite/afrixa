@@ -15,7 +15,7 @@ type Conversation = {
   last_message_at: string;
 };
 
-export const Route = createFileRoute("/_authenticated/messages")({
+export const Route = createFileRoute("/_authenticated/messages/")({
   head: () => ({
     meta: [
       { title: "Messages — Afrixa" },
