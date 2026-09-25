@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AppShell } from "@/components/afrixa/AppShell";
 import { NotificationBell } from "@/components/afrixa/NotificationBell";
 import { GigCard, OpportunityCard } from "@/components/afrixa/OpportunityCard";
-import { OPPORTUNITY_STATS, initials, money, type Opportunity } from "@/lib/afrixa";
+import { OPPORTUNITY_STATS, initials, type Opportunity } from "@/lib/afrixa";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -16,12 +16,12 @@ export const Route = createFileRoute("/_authenticated/home")({
       {
         name: "description",
         content:
-          "See jobs, gigs and freelance projects matched to your skills, plus your escrow balance and profile strength.",
+          "See jobs, gigs and freelance projects matched to your skills.",
       },
       { property: "og:title", content: "Your Afrixa feed" },
       {
         property: "og:description",
-        content: "Matched opportunities, escrow balance and profile progress in one place.",
+        content: "Matched opportunities and profile progress in one place.",
       },
     ],
   }),
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/home")({
 });
 
 function HomePage() {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
 
   const { data: opportunities = [], isLoading } = useQuery({
     queryKey: ["opportunities", "feed"],
@@ -44,18 +44,6 @@ function HomePage() {
     },
   });
 
-  const { data: balance = 0 } = useQuery({
-    queryKey: ["escrow-balance", user?.id],
-    enabled: Boolean(user?.id),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("escrows")
-        .select("amount,status")
-        .in("status", ["funded", "in_progress", "delivered"]);
-      if (error) throw error;
-      return (data ?? []).reduce((total, row) => total + Number(row.amount), 0);
-    },
-  });
 
   const gigs = opportunities.filter((item) => item.category === "gig").slice(0, 4);
   const jobs = opportunities.filter((item) => item.category !== "gig");
@@ -92,19 +80,9 @@ function HomePage() {
         </Link>
       </div>
 
-      <div className="-mt-10 space-y-6 px-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
-            <p className="text-xs text-muted-foreground">In escrow</p>
-            <p className="mt-1 text-xl font-bold">{money(balance)}</p>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
-            <p className="text-xs text-muted-foreground">Profile strength</p>
-            <p className="mt-1 text-xl font-bold text-secondary">
-              {profile?.profile_strength ?? 0}%
-            </p>
-          </div>
-        </div>
+      <div className="space-y-6 px-4 pt-6">
+
+
 
         {profile?.role === "client" ? (
           <div className="grid gap-3 sm:grid-cols-2">
