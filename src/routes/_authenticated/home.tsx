@@ -162,19 +162,21 @@ function HomePage() {
           </p>
         </Link>
 
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {OPPORTUNITY_STATS.map((stat) => (
-            <Link
-              key={stat.key}
-              to="/explore"
-              search={{ category: stat.key }}
-              className="shrink-0 rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-card"
-            >
-              <p className="text-sm font-bold">{stat.value}</p>
-              <p className="text-[11px] text-muted-foreground">{stat.label}</p>
-            </Link>
-          ))}
-        </div>
+        {profile?.role !== "client" ? (
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {OPPORTUNITY_STATS.map((stat) => (
+              <Link
+                key={stat.key}
+                to="/explore"
+                search={{ category: stat.key }}
+                className="shrink-0 rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-card"
+              >
+                <p className="text-sm font-bold">{stat.value}</p>
+                <p className="text-[11px] text-muted-foreground">{stat.label}</p>
+              </Link>
+            ))}
+          </div>
+        ) : null}
 
         {profile?.role !== "client" && gigs.length ? (
           <section>
