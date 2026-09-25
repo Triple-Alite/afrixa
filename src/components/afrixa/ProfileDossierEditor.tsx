@@ -12,6 +12,7 @@ import {
   addCertification,
   addEducation,
   addExperience,
+  announcePosition,
   addSkill,
   deleteDossierRow,
   fetchProfileDossier,
@@ -98,9 +99,17 @@ export function ProfileDossierEditor({
     summary: "",
   });
   const [current, setCurrent] = useState(false);
+  const [shareJob, setShareJob] = useState(true);
+  const [updateHeadline, setUpdateHeadline] = useState(true);
   const createJob = useMutation({
-    mutationFn: () =>
-      addExperience(userId, {
+    mutationFn: async () => {
+      const payload = {
+        title: job.title.trim(),
+        company: job.company.trim(),
+        summary: job.summary.trim() || null,
+        is_current: current,
+      };
+      await addExperience(userId, {
         title: job.title.trim(),
         company: job.company.trim(),
         location: job.location.trim() || null,
@@ -108,13 +117,21 @@ export function ProfileDossierEditor({
         end_date: job.end_date || null,
         is_current: current,
         summary: job.summary.trim() || null,
-      }),
-    onSuccess: () => {
+      });
+      await announcePosition(userId, payload, {
+        share: shareJob,
+        updateHeadline: current && updateHeadline,
+      });
+      return shareJob;
+    },
+    onSuccess: (shared) => {
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
       setJob({ title: "", company: "", location: "", start_date: "", end_date: "", summary: "" });
       setCurrent(false);
       setOpenForm(null);
       refresh();
-      toast.success("Experience added");
+      toast.success(shared ? "Position added and shared with your network" : "Position added");
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -350,6 +367,26 @@ export function ProfileDossierEditor({
                 I currently work here
                 <Switch checked={current} onCheckedChange={setCurrent} />
               </label>
+              {current ? (
+                <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2 text-sm">
+                  <span>
+                    Update my headline
+                    <span className="block text-[11px] text-muted-foreground">
+                      {job.title && job.company ? `${job.title} at ${job.company}` : "Uses this role title and company"}
+                    </span>
+                  </span>
+                  <Switch checked={updateHeadline} onCheckedChange={setUpdateHeadline} />
+                </label>
+              ) : null}
+              <label className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2 text-sm">
+                <span>
+                  Share with your network
+                  <span className="block text-[11px] text-muted-foreground">
+                    Posts this update to the Network feed so people can congratulate you
+                  </span>
+                </span>
+                <Switch checked={shareJob} onCheckedChange={setShareJob} />
+              </label>
               <Textarea
                 value={job.summary}
                 onChange={(event) => setJob((prev) => ({ ...prev, summary: event.target.value }))}
@@ -363,7 +400,7 @@ export function ProfileDossierEditor({
                 }
                 onClick={() => createJob.mutate()}
               >
-                Add experience
+                {createJob.isPending ? "Saving…" : shareJob ? "Save and share position" : "Save position"}
               </Button>
             </div>
           ) : null}

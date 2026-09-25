@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChatCircle, SealCheck, ShareNetwork, Trash } from "@phosphor-icons/react";
+import { Briefcase, ChatCircle, SealCheck, ShareNetwork, Trash } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -111,6 +111,18 @@ export function PostCard({ post }: { post: FeedPost }) {
           </button>
         ) : null}
       </header>
+
+      {post.kind === "position" ? (
+        <div className="surface-hero mx-4 mb-3 flex items-center gap-3 rounded-xl p-4 text-primary-foreground">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15">
+            <Briefcase size={22} weight="fill" />
+          </span>
+          <span>
+            <span className="block text-xs uppercase tracking-wide opacity-80">New position</span>
+            <span className="block text-sm font-semibold">Congratulate {author?.full_name?.split(" ")[0] ?? "them"} 🎉</span>
+          </span>
+        </div>
+      ) : null}
 
       {post.body ? (
         <p className="whitespace-pre-wrap px-4 pb-3 text-sm leading-relaxed">{post.body}</p>

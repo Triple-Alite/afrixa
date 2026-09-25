@@ -8,6 +8,13 @@
       "when": 1790319499488,
       "tag": "0000_chat_attachments_realtime",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790319978382,
+      "tag": "0001_posts_position_kind",
+      "breakpoints": true
     }
   ]
 }
