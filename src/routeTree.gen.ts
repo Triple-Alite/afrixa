@@ -20,7 +20,6 @@ import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedGigsRouteImport } from './routes/_authenticated/gigs'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
 import { Route as AuthenticatedNetworkRouteImport } from './routes/_authenticated/network'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -32,6 +31,7 @@ import { Route as AuthenticatedTalentRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedCompaniesSlugRouteImport } from './routes/_authenticated/companies.$slug'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
 import { Route as AuthenticatedTalentIdRouteImport } from './routes/_authenticated/talent.$id'
 import { Route as ApiPublicWebhooksFlutterwaveRouteImport } from './routes/api/public/webhooks/flutterwave'
@@ -90,11 +90,6 @@ const AuthenticatedGigsRoute = AuthenticatedGigsRouteImport.update({
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNetworkRoute = AuthenticatedNetworkRouteImport.update({
@@ -156,10 +151,16 @@ const AuthenticatedJobsIdRoute = AuthenticatedJobsIdRouteImport.update({
   path: '/jobs/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMessagesIndexRoute =
+  AuthenticatedMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedMessagesRoute,
+  id: '/messages/$id',
+  path: '/messages/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTalentIdRoute = AuthenticatedTalentIdRouteImport.update({
   id: '/$id',
@@ -190,7 +191,6 @@ export interface FileRoutesByFullPath {
   '/feed': typeof AuthenticatedFeedRoute
   '/gigs': typeof AuthenticatedGigsRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/network': typeof AuthenticatedNetworkRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -204,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/talent/$id': typeof AuthenticatedTalentIdRoute
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/webhooks/flutterwave': typeof ApiPublicWebhooksFlutterwaveRoute
   '/api/public/webhooks/paystack': typeof ApiPublicWebhooksPaystackRoute
 }
@@ -218,7 +219,6 @@ export interface FileRoutesByTo {
   '/feed': typeof AuthenticatedFeedRoute
   '/gigs': typeof AuthenticatedGigsRoute
   '/home': typeof AuthenticatedHomeRoute
-  '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/network': typeof AuthenticatedNetworkRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -232,6 +232,7 @@ export interface FileRoutesByTo {
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/talent/$id': typeof AuthenticatedTalentIdRoute
+  '/messages': typeof AuthenticatedMessagesIndexRoute
   '/api/public/webhooks/flutterwave': typeof ApiPublicWebhooksFlutterwaveRoute
   '/api/public/webhooks/paystack': typeof ApiPublicWebhooksPaystackRoute
 }
@@ -248,7 +249,6 @@ export interface FileRoutesById {
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/gigs': typeof AuthenticatedGigsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
-  '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/_authenticated/network': typeof AuthenticatedNetworkRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -262,6 +262,7 @@ export interface FileRoutesById {
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
   '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
   '/_authenticated/talent/$id': typeof AuthenticatedTalentIdRoute
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/webhooks/flutterwave': typeof ApiPublicWebhooksFlutterwaveRoute
   '/api/public/webhooks/paystack': typeof ApiPublicWebhooksPaystackRoute
 }
@@ -278,7 +279,6 @@ export interface FileRouteTypes {
     | '/feed'
     | '/gigs'
     | '/home'
-    | '/messages'
     | '/network'
     | '/notifications'
     | '/onboarding'
@@ -292,6 +292,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/messages/$id'
     | '/talent/$id'
+    | '/messages/'
     | '/api/public/webhooks/flutterwave'
     | '/api/public/webhooks/paystack'
   fileRoutesByTo: FileRoutesByTo
@@ -306,7 +307,6 @@ export interface FileRouteTypes {
     | '/feed'
     | '/gigs'
     | '/home'
-    | '/messages'
     | '/network'
     | '/notifications'
     | '/onboarding'
@@ -320,6 +320,7 @@ export interface FileRouteTypes {
     | '/jobs/$id'
     | '/messages/$id'
     | '/talent/$id'
+    | '/messages'
     | '/api/public/webhooks/flutterwave'
     | '/api/public/webhooks/paystack'
   id:
@@ -335,7 +336,6 @@ export interface FileRouteTypes {
     | '/_authenticated/feed'
     | '/_authenticated/gigs'
     | '/_authenticated/home'
-    | '/_authenticated/messages'
     | '/_authenticated/network'
     | '/_authenticated/notifications'
     | '/_authenticated/onboarding'
@@ -349,6 +349,7 @@ export interface FileRouteTypes {
     | '/_authenticated/jobs/$id'
     | '/_authenticated/messages/$id'
     | '/_authenticated/talent/$id'
+    | '/_authenticated/messages/'
     | '/api/public/webhooks/flutterwave'
     | '/api/public/webhooks/paystack'
   fileRoutesById: FileRoutesById
@@ -440,13 +441,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/network': {
       id: '/_authenticated/network'
       path: '/network'
@@ -524,12 +518,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJobsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/messages/$id': {
       id: '/_authenticated/messages/$id'
-      path: '/$id'
+      path: '/messages/$id'
       fullPath: '/messages/$id'
       preLoaderRoute: typeof AuthenticatedMessagesIdRouteImport
-      parentRoute: typeof AuthenticatedMessagesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/talent/$id': {
       id: '/_authenticated/talent/$id'
@@ -569,19 +570,6 @@ const AuthenticatedCompaniesRouteWithChildren =
     AuthenticatedCompaniesRouteChildren,
   )
 
-interface AuthenticatedMessagesRouteChildren {
-  AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
-}
-
-const AuthenticatedMessagesRouteChildren: AuthenticatedMessagesRouteChildren = {
-  AuthenticatedMessagesIdRoute: AuthenticatedMessagesIdRoute,
-}
-
-const AuthenticatedMessagesRouteWithChildren =
-  AuthenticatedMessagesRoute._addFileChildren(
-    AuthenticatedMessagesRouteChildren,
-  )
-
 interface AuthenticatedTalentRouteChildren {
   AuthenticatedTalentIdRoute: typeof AuthenticatedTalentIdRoute
 }
@@ -602,7 +590,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedGigsRoute: typeof AuthenticatedGigsRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
-  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedNetworkRoute: typeof AuthenticatedNetworkRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
@@ -613,6 +600,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTalentRoute: typeof AuthenticatedTalentRouteWithChildren
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
+  AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -624,7 +613,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedGigsRoute: AuthenticatedGigsRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
-  AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedNetworkRoute: AuthenticatedNetworkRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
@@ -635,6 +623,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTalentRoute: AuthenticatedTalentRouteWithChildren,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
+  AuthenticatedMessagesIdRoute: AuthenticatedMessagesIdRoute,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
