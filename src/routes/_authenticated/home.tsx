@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/home")({
 });
 
 function HomePage() {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
 
   const { data: opportunities = [], isLoading } = useQuery({
     queryKey: ["opportunities", "feed"],

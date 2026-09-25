@@ -47,6 +47,19 @@ function ProfilePage() {
 
   const discoverable = (profile as { discoverable?: boolean } | null)?.discoverable ?? true;
 
+  const { data: escrowBalance = 0 } = useQuery({
+    queryKey: ["escrow-balance", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("escrows")
+        .select("amount,status")
+        .in("status", ["funded", "in_progress", "delivered"]);
+      if (error) throw error;
+      return (data ?? []).reduce((total, row) => total + Number(row.amount), 0);
+    },
+  });
+
   async function onAvatarPicked(file: File | undefined) {
     if (!file || !user) return;
     setBusy(true);
@@ -203,6 +216,10 @@ function ProfilePage() {
             <p className="text-xs text-muted-foreground">Profile strength</p>
             <p className="mt-1 text-xl font-bold text-secondary">{profile?.profile_strength ?? 0}%</p>
             <Progress value={profile?.profile_strength ?? 0} className="mt-3 h-2" />
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
+            <p className="text-xs text-muted-foreground">In escrow</p>
+            <p className="mt-1 text-xl font-bold">{money(escrowBalance)}</p>
           </div>
           <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
             <p className="text-xs text-muted-foreground">Total earned</p>
