@@ -10,6 +10,7 @@ import {
 import { CaretLeft } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -23,10 +24,13 @@ const NAV = [
 
 
 export function BottomNav() {
+  const { profile } = useAuth();
+  const isClient = profile?.role === "client";
+
   return (
     <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md border-t border-border bg-card/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <ul className="flex items-stretch justify-between">
-        {NAV.map(({ to, label, Icon }) => (
+        {NAV.filter(({ to }) => !(isClient && to === "/explore")).map(({ to, label, Icon }) => (
           <li key={to} className="flex-1">
             <Link
               to={to}

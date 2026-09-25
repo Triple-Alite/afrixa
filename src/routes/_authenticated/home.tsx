@@ -71,13 +71,15 @@ function HomePage() {
           <NotificationBell />
         </div>
 
-        <Link
-          to="/explore"
-          className="mt-6 flex h-12 items-center gap-2 rounded-xl bg-white/95 px-4 text-sm text-muted-foreground"
-        >
-          <MagnifyingGlass size={18} />
-          Search jobs, gigs, talent…
-        </Link>
+        {profile?.role !== "client" ? (
+          <Link
+            to="/explore"
+            className="mt-6 flex h-12 items-center gap-2 rounded-xl bg-white/95 px-4 text-sm text-muted-foreground"
+          >
+            <MagnifyingGlass size={18} />
+            Search jobs, gigs, talent…
+          </Link>
+        ) : null}
       </div>
 
       <div className="space-y-6 px-4 pt-6">
