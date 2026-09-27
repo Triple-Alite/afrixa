@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Briefcase, Globe, ShieldCheck } from "@phosphor-icons/react";
 
-import heroImg from "@/assets/hero-talent.png";
+import heroImg from "@/assets/future-starts-here.png";
 import { OPPORTUNITY_STATS } from "@/lib/afrixa";
 
 export const Route = createFileRoute("/")({
@@ -71,9 +71,9 @@ function Intro() {
 
         <img
           src={heroImg}
-          alt="African freelancers collaborating on laptops"
-          width={1024}
-          height={768}
+          alt="Afrixa — Your future starts here, with a globe showing opportunities across Africa and the world"
+          width={768}
+          height={1396}
           className="mt-6 w-full"
         />
 
