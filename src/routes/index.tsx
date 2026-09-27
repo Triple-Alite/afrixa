@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Briefcase, Globe, ShieldCheck } from "@phosphor-icons/react";
 
-import heroImg from "@/assets/hero-talent.png";
+import wordmarkImg from "@/assets/afrixa-wordmark.png";
+import globeImg from "@/assets/afrixa-globe.png";
 import { OPPORTUNITY_STATS } from "@/lib/afrixa";
 
 export const Route = createFileRoute("/")({
@@ -24,12 +24,6 @@ export const Route = createFileRoute("/")({
   component: Intro,
 });
 
-const PILLARS = [
-  { Icon: Briefcase, label: "Build your career" },
-  { Icon: ShieldCheck, label: "Get paid securely" },
-  { Icon: Globe, label: "Grow without borders" },
-];
-
 const WHY = [
   "Only African talent on the supply side",
   "International clients are buyers only",
@@ -41,55 +35,51 @@ const WHY = [
 function Intro() {
   return (
     <div className="mx-auto min-h-screen w-full max-w-md bg-background">
-      <section className="surface-hero px-6 pb-10 pt-12 text-primary-foreground">
-        <div className="flex items-center gap-2">
-          <span className="surface-gold flex size-9 items-center justify-center rounded-xl text-sm font-bold text-gold-foreground">
-            A
-          </span>
-          <span className="text-lg font-semibold tracking-tight">Afrixa</span>
+      <section className="pt-12">
+        <div className="px-6 text-center">
+          <img
+            src={wordmarkImg}
+            alt="Afrixa"
+            width={430}
+            height={141}
+            className="mx-auto h-16 w-auto"
+          />
+          <p className="mt-1 text-[11px] font-semibold tracking-[0.25em] text-muted-foreground">
+            CONNECT · EMPOWER · GROW
+          </p>
+
+          <h1 className="mt-9 text-[32px] font-bold leading-[1.15] text-primary">
+            Your Future
+            <br />
+            Starts Here.
+          </h1>
+          <p className="mx-auto mt-3 max-w-[17rem] text-sm leading-relaxed text-muted-foreground">
+            The Pan-African platform that connects your skills to real
+            opportunities.
+          </p>
+
+          <Link
+            to="/auth"
+            search={{ mode: "signup" }}
+            className="mt-9 flex h-12 w-full items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground shadow-lift transition-colors hover:bg-primary/90"
+          >
+            Get Started
+          </Link>
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Already have an account?{" "}
+            <Link to="/auth" search={{ mode: "signin" }} className="font-semibold text-gold underline">
+              Log in
+            </Link>
+          </p>
         </div>
 
-        <h1 className="mt-8 text-[32px] font-bold leading-[1.15]">
-          Africa's Talent.
-          <br />
-          Global Opportunities.
-        </h1>
-        <p className="mt-3 text-sm text-white/75">
-          Connect with verified opportunities across Africa and the world.
-        </p>
-
-        <ul className="mt-6 space-y-2.5">
-          {PILLARS.map(({ Icon, label }) => (
-            <li key={label} className="flex items-center gap-3 text-sm">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-white/10">
-                <Icon size={18} weight="bold" />
-              </span>
-              {label}
-            </li>
-          ))}
-        </ul>
-
         <img
-          src={heroImg}
-          alt="African freelancers collaborating on laptops"
-          width={1024}
-          height={768}
-          className="mt-6 w-full"
+          src={globeImg}
+          alt="A globe with golden pins marking opportunities across Africa and the world"
+          width={768}
+          height={276}
+          className="mt-8 w-full"
         />
-
-        <Link
-          to="/auth"
-          search={{ mode: "signup" }}
-          className="surface-gold mt-6 flex h-12 w-full items-center justify-center rounded-xl text-sm font-semibold text-gold-foreground shadow-lift"
-        >
-          Get Started
-        </Link>
-        <p className="mt-3 text-center text-xs text-white/70">
-          Already have an account?{" "}
-          <Link to="/auth" search={{ mode: "signin" }} className="font-semibold text-gold underline">
-            Sign In
-          </Link>
-        </p>
       </section>
 
       <section className="px-6 py-8">
