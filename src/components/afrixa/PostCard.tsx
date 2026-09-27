@@ -310,3 +310,35 @@ export function PostCard({ post }: { post: FeedPost }) {
     </article>
   );
 }
+
+function CommentRow({ item, onReply }: { item: PostComment; onReply: () => void }) {
+  return (
+    <div className="flex items-start gap-2">
+      <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">
+        {item.author?.avatar_url ? (
+          <img src={item.author.avatar_url} alt="" className="size-full object-cover" />
+        ) : (
+          initials(item.author?.full_name ?? "A")
+        )}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="rounded-2xl bg-muted/60 px-3 py-2">
+          <p className="text-xs font-semibold">
+            {item.author?.full_name ?? "Afrixa member"}
+            <span className="ml-1 font-normal text-muted-foreground">
+              · {timeAgo(item.created_at)}
+            </span>
+          </p>
+          <p className="text-sm">{item.body}</p>
+        </div>
+        <button
+          type="button"
+          className="ml-3 mt-0.5 text-xs font-semibold text-muted-foreground hover:text-primary"
+          onClick={onReply}
+        >
+          Reply
+        </button>
+      </div>
+    </div>
+  );
+}
