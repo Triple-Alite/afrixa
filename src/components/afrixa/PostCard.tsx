@@ -16,6 +16,7 @@ import {
   reactionMeta,
   timeAgo,
   type FeedPost,
+  type PostComment,
   type ReactionKind,
 } from "@/lib/social";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,27 @@ export function PostCard({ post }: { post: FeedPost }) {
     },
     onSuccess: () => {
       setDraft("");
+      queryClient.invalidateQueries({ queryKey: ["post-comments", post.id] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const reply = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Sign in to reply");
+      if (!replyTo) throw new Error("Pick a comment to reply to");
+      const { error } = await supabase.from("post_comments").insert({
+        post_id: post.id,
+        author_id: user.id,
+        body: replyDraft.trim(),
+        parent_id: replyTo.parent_id ?? replyTo.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setReplyDraft("");
+      setReplyTo(null);
       queryClient.invalidateQueries({ queryKey: ["post-comments", post.id] });
       queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
