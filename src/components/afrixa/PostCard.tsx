@@ -26,6 +26,8 @@ export function PostCard({ post }: { post: FeedPost }) {
   const [showComments, setShowComments] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [draft, setDraft] = useState("");
+  const [replyTo, setReplyTo] = useState<PostComment | null>(null);
+  const [replyDraft, setReplyDraft] = useState("");
 
   const mine = user?.id === post.author_id;
 
