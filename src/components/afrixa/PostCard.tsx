@@ -217,26 +217,64 @@ export function PostCard({ post }: { post: FeedPost }) {
 
       {showComments ? (
         <div className="space-y-3 border-t border-border p-4">
-          {comments.map((item) => (
-            <div key={item.id} className="flex items-start gap-2">
-              <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">
-                {item.author?.avatar_url ? (
-                  <img src={item.author.avatar_url} alt="" className="size-full object-cover" />
-                ) : (
-                  initials(item.author?.full_name ?? "A")
-                )}
-              </span>
-              <div className="min-w-0 flex-1 rounded-2xl bg-muted/60 px-3 py-2">
-                <p className="text-xs font-semibold">
-                  {item.author?.full_name ?? "Afrixa member"}
-                  <span className="ml-1 font-normal text-muted-foreground">
-                    · {timeAgo(item.created_at)}
-                  </span>
-                </p>
-                <p className="text-sm">{item.body}</p>
+          {comments
+            .filter((item) => !item.parent_id)
+            .map((item) => (
+              <div key={item.id} className="space-y-2">
+                <CommentRow
+                  item={item}
+                  onReply={() => {
+                    setReplyTo(item);
+                    setReplyDraft("");
+                  }}
+                />
+                {comments
+                  .filter((child) => child.parent_id === item.id)
+                  .map((child) => (
+                    <div key={child.id} className="ml-10">
+                      <CommentRow
+                        item={child}
+                        onReply={() => {
+                          setReplyTo(child);
+                          setReplyDraft("");
+                        }}
+                      />
+                    </div>
+                  ))}
+                {replyTo && (replyTo.id === item.id || replyTo.parent_id === item.id) ? (
+                  <div className="ml-10 space-y-1">
+                    <p className="text-xs text-muted-foreground">
+                      Replying to {replyTo.author?.full_name ?? "comment"} ·{" "}
+                      <button
+                        type="button"
+                        className="font-semibold text-primary"
+                        onClick={() => setReplyTo(null)}
+                      >
+                        Cancel
+                      </button>
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={replyDraft}
+                        onChange={(event) => setReplyDraft(event.target.value)}
+                        placeholder="Write a reply…"
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" && replyDraft.trim()) reply.mutate();
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={!replyDraft.trim() || reply.isPending}
+                        onClick={() => reply.mutate()}
+                      >
+                        Send
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
-            </div>
-          ))}
+            ))}
           {comments.length === 0 ? (
             <p className="text-xs text-muted-foreground">Be the first to comment.</p>
           ) : null}
