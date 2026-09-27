@@ -36,6 +36,7 @@ export type PostComment = {
   author_id: string;
   body: string;
   created_at: string;
+  parent_id: string | null;
   author: PostAuthor | null;
 };
 
