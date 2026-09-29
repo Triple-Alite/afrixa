@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import wordmarkImg from "@/assets/afrixa-wordmark.png";
+import wordmarkImg from "@/assets/afrixa-logo.png";
 import globeImg from "@/assets/afrixa-globe.png";
 import { OPPORTUNITY_STATS } from "@/lib/afrixa";
 
@@ -40,9 +40,9 @@ function Intro() {
           <img
             src={wordmarkImg}
             alt="Afrixa"
-            width={430}
-            height={141}
-            className="mx-auto h-16 w-auto"
+            width={1020}
+            height={539}
+            className="mx-auto h-24 w-auto"
           />
           <p className="mt-1 text-[11px] font-semibold tracking-[0.25em] text-muted-foreground">
             CONNECT · EMPOWER · GROW

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
+import logoImg from "@/assets/afrixa-logo.png";
 import { COUNTRIES } from "@/lib/afrixa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,7 +117,10 @@ function AuthPage() {
         <Link to="/" className="text-xs font-medium text-white/70">
           ← Back
         </Link>
-        <h1 className="mt-6 text-[28px] font-bold leading-tight">
+        <div className="mt-5 inline-block rounded-2xl bg-card px-3 py-1">
+          <img src={logoImg} alt="Afrixa" width={1020} height={539} className="h-14 w-auto" />
+        </div>
+        <h1 className="mt-4 text-[28px] font-bold leading-tight">
           {isSignUp ? "Create your account" : "Welcome back"}
         </h1>
         <p className="mt-2 text-sm text-white/70">
