@@ -204,7 +204,11 @@ function ProfilePage() {
                   <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-1">
                     <ShieldCheck size={13} weight="fill" /> Verified
                   </span>
-                ) : null}
+                ) : (
+                  <Link to="/verify" className="inline-flex items-center gap-1 rounded-full bg-gold px-2 py-1 text-foreground">
+                    <ShieldCheck size={13} /> Get verified
+                  </Link>
+                )}
                 {profile?.country ? <span className="rounded-full bg-white/15 px-2 py-1">{profile.country}</span> : null}
               </div>
             </div>
