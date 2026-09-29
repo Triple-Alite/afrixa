@@ -54,6 +54,8 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [accountType, setAccountType] = useState<"individual" | "organization">("individual");
+  const [orgName, setOrgName] = useState("");
 
   useEffect(() => {
     if (!loading && user) navigate({ to: "/home" });
@@ -68,12 +70,18 @@ function AuthPage() {
           toast.error("Please accept the Terms of Service to continue.");
           return;
         }
+        const isOrg = accountType === "organization";
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/home`,
-            data: { full_name: fullName, country },
+            data: {
+              full_name: fullName,
+              country,
+              account_type: accountType,
+              ...(isOrg ? { business_name: orgName } : {}),
+            },
           },
         });
         if (error) throw error;
@@ -120,8 +128,41 @@ function AuthPage() {
 
       <form onSubmit={submit} className="space-y-4 px-6 py-8">
         {isSignUp ? (
+          <div className="flex gap-1 rounded-full border border-border bg-card p-1">
+            {(["individual", "organization"] as const).map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                onClick={() => setAccountType(kind)}
+                className={`flex-1 rounded-full py-2 text-xs font-semibold ${
+                  accountType === kind ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}
+              >
+                {kind === "individual" ? "Individual" : "Organization"}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {isSignUp && accountType === "organization" ? (
           <div className="space-y-1.5">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label htmlFor="orgName">Organization name</Label>
+            <Input
+              id="orgName"
+              value={orgName}
+              onChange={(e) => setOrgName(e.target.value)}
+              placeholder="Afrixa Technologies Ltd"
+              required
+              className="h-12 bg-card"
+            />
+          </div>
+        ) : null}
+
+        {isSignUp ? (
+          <div className="space-y-1.5">
+            <Label htmlFor="fullName">
+              {accountType === "organization" ? "Your full name (account admin)" : "Full Name"}
+            </Label>
             <Input
               id="fullName"
               value={fullName}
