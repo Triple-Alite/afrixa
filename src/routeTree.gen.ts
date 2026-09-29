@@ -28,6 +28,7 @@ import { Route as AuthenticatedPaymentSetupRouteImport } from './routes/_authent
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedProposalsRouteImport } from './routes/_authenticated/proposals'
 import { Route as AuthenticatedTalentRouteImport } from './routes/_authenticated/talent'
+import { Route as AuthenticatedVerifyRouteImport } from './routes/_authenticated/verify'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedCompaniesSlugRouteImport } from './routes/_authenticated/companies.$slug'
 import { Route as AuthenticatedJobsIdRouteImport } from './routes/_authenticated/jobs.$id'
@@ -135,6 +136,11 @@ const AuthenticatedTalentRoute = AuthenticatedTalentRouteImport.update({
   path: '/talent',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedVerifyRoute = AuthenticatedVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   id: '/wallet',
   path: '/wallet',
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
+  '/verify': typeof AuthenticatedVerifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/proposals': typeof AuthenticatedProposalsRoute
   '/talent': typeof AuthenticatedTalentRouteWithChildren
+  '/verify': typeof AuthenticatedVerifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/jobs/$id': typeof AuthenticatedJobsIdRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/proposals': typeof AuthenticatedProposalsRoute
   '/_authenticated/talent': typeof AuthenticatedTalentRouteWithChildren
+  '/_authenticated/verify': typeof AuthenticatedVerifyRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/companies/$slug': typeof AuthenticatedCompaniesSlugRoute
   '/_authenticated/jobs/$id': typeof AuthenticatedJobsIdRoute
@@ -287,6 +296,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposals'
     | '/talent'
+    | '/verify'
     | '/wallet'
     | '/companies/$slug'
     | '/jobs/$id'
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/proposals'
     | '/talent'
+    | '/verify'
     | '/wallet'
     | '/companies/$slug'
     | '/jobs/$id'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/proposals'
     | '/_authenticated/talent'
+    | '/_authenticated/verify'
     | '/_authenticated/wallet'
     | '/_authenticated/companies/$slug'
     | '/_authenticated/jobs/$id'
@@ -497,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTalentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/verify': {
+      id: '/_authenticated/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof AuthenticatedVerifyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/wallet': {
       id: '/_authenticated/wallet'
       path: '/wallet'
@@ -598,6 +617,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedProposalsRoute: typeof AuthenticatedProposalsRoute
   AuthenticatedTalentRoute: typeof AuthenticatedTalentRouteWithChildren
+  AuthenticatedVerifyRoute: typeof AuthenticatedVerifyRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedJobsIdRoute: typeof AuthenticatedJobsIdRoute
   AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
@@ -621,6 +641,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedProposalsRoute: AuthenticatedProposalsRoute,
   AuthenticatedTalentRoute: AuthenticatedTalentRouteWithChildren,
+  AuthenticatedVerifyRoute: AuthenticatedVerifyRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedJobsIdRoute: AuthenticatedJobsIdRoute,
   AuthenticatedMessagesIdRoute: AuthenticatedMessagesIdRoute,
