@@ -403,6 +403,48 @@ export type Database = {
         }
         Relationships: []
       }
+      identity_verifications: {
+        Row: {
+          created_at: string
+          document_path: string
+          full_name: string
+          id: string
+          id_number_last4: string
+          id_type: string
+          review_note: string | null
+          reviewed_at: string | null
+          selfie_path: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_path: string
+          full_name: string
+          id?: string
+          id_number_last4: string
+          id_type: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          selfie_path?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_path?: string
+          full_name?: string
+          id?: string
+          id_number_last4?: string
+          id_type?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          selfie_path?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           attachment_name: string | null
