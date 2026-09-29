@@ -8,6 +8,9 @@ import { AppShell } from "@/components/afrixa/AppShell";
 import { NotificationBell } from "@/components/afrixa/NotificationBell";
 import { GigCard, OpportunityCard } from "@/components/afrixa/OpportunityCard";
 import { OPPORTUNITY_STATS, initials, type Opportunity } from "@/lib/afrixa";
+import { PostCard } from "@/components/afrixa/PostCard";
+import { PostComposer } from "@/components/afrixa/PostComposer";
+import { fetchFeed } from "@/lib/social.data";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -29,7 +32,7 @@ export const Route = createFileRoute("/_authenticated/home")({
 });
 
 function HomePage() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
 
   const { data: opportunities = [], isLoading } = useQuery({
     queryKey: ["opportunities", "feed"],
@@ -42,6 +45,10 @@ function HomePage() {
       if (error) throw error;
       return (data ?? []) as Opportunity[];
     },
+  });
+  const { data: posts = [], isLoading: feedLoading } = useQuery({
+    queryKey: ["feed", user?.id],
+    queryFn: () => fetchFeed(user?.id),
   });
 
 
@@ -195,6 +202,27 @@ function HomePage() {
             </div>
           </section>
         ) : null}
+
+        <section>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">From your network</h2>
+            <Link to="/feed" className="text-xs font-medium text-secondary">
+              Open Network
+            </Link>
+          </div>
+          <div className="mt-3 space-y-3">
+            <PostComposer />
+            {feedLoading ? (
+              <p className="text-sm text-muted-foreground">Loading posts…</p>
+            ) : posts.length ? (
+              posts.map((post) => <PostCard key={post.id} post={post} />)
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No posts yet — share an update or connect with people to fill your feed.
+              </p>
+            )}
+          </div>
+        </section>
       </div>
     </AppShell>
   );
