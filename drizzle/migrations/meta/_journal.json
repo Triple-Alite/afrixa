@@ -29,6 +29,13 @@
       "when": 1790703136734,
       "tag": "0003_org_signup_and_id_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790764331981,
+      "tag": "0004_fix_handle_new_user_role_cast",
+      "breakpoints": true
     }
   ]
 }
