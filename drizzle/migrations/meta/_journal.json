@@ -36,6 +36,13 @@
       "when": 1790764331981,
       "tag": "0004_fix_handle_new_user_role_cast",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790839503707,
+      "tag": "0005_message_replies_reactions",
+      "breakpoints": true
     }
   ]
 }
