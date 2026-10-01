@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MagnifyingGlass, SealCheck, UsersThree } from "@phosphor-icons/react";
@@ -50,6 +50,15 @@ function NetworkFeedPage() {
   const [tab, setTab] = useState<TabKey>("feed");
   const [term, setTerm] = useState("");
   const queryClient = useQueryClient();
+
+  // The bottom-bar "Post" button switches back to the feed tab where the composer lives.
+  useEffect(() => {
+    function openComposer() {
+      setTab("feed");
+    }
+    window.addEventListener("afrixa:open-composer", openComposer);
+    return () => window.removeEventListener("afrixa:open-composer", openComposer);
+  }, []);
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["feed", user?.id],

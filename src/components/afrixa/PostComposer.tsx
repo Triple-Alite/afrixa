@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ImageSquare, PaperPlaneTilt, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
@@ -17,6 +17,8 @@ export function PostComposer() {
   const { user, profile } = useAuth();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState("");
@@ -25,6 +27,19 @@ export function PostComposer() {
   const [linkUrl, setLinkUrl] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  // The bottom-bar "Post" button (visible on the Network page) opens the composer.
+  useEffect(() => {
+    function openComposer() {
+      setOpen(true);
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        bodyRef.current?.focus();
+      });
+    }
+    window.addEventListener("afrixa:open-composer", openComposer);
+    return () => window.removeEventListener("afrixa:open-composer", openComposer);
+  }, []);
 
   const publish = useMutation({
     mutationFn: async () => {
@@ -66,7 +81,7 @@ export function PostComposer() {
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+    <section ref={sectionRef} className="rounded-2xl border border-border bg-card p-3 shadow-sm">
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground">
           {profile?.avatar_url ? (
@@ -97,6 +112,7 @@ export function PostComposer() {
       {open ? (
         <div className="mt-3 space-y-3">
           <Textarea
+            ref={bodyRef}
             value={body}
             onChange={(event) => setBody(event.target.value)}
             placeholder="What are you working on?"
