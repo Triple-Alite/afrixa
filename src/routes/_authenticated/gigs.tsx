@@ -106,6 +106,7 @@ function PostGigForm({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [skill, setSkill] = useState("");
+  const [customSkill, setCustomSkill] = useState("");
   const [price, setPrice] = useState("");
   const [deliveryDays, setDeliveryDays] = useState("7");
 
@@ -114,7 +115,8 @@ function PostGigForm({
       if (!user) throw new Error("Sign in again to post a gig");
       const amount = Number(price);
       const days = Number(deliveryDays);
-      if (!title.trim() || !description.trim() || !skill || !amount || !days) {
+      const selectedSkill = skill === "other" ? customSkill.trim() : skill;
+      if (!title.trim() || !description.trim() || !selectedSkill || !amount || !days) {
         throw new Error("Add a title, brief, skill, price and delivery time");
       }
       const opportunity = {
@@ -128,7 +130,7 @@ function PostGigForm({
         price_from: amount,
         delivery_days: days,
         escrow_funded: true,
-        skills: [skill],
+        skills: [selectedSkill],
         work_mode: "Remote",
       };
       const { data, error } = await supabase
@@ -193,8 +195,20 @@ function PostGigForm({
                     {item}
                   </SelectItem>
                 ))}
+                <SelectItem value="other">Other — type your skill</SelectItem>
               </SelectContent>
             </Select>
+            {skill === "other" ? (
+              <Input
+                id="custom-skill"
+                value={customSkill}
+                onChange={(event) => setCustomSkill(event.target.value)}
+                placeholder="Type the skill you need"
+                aria-label="Custom primary skill"
+                autoFocus
+                className="h-12 bg-background"
+              />
+            ) : null}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
