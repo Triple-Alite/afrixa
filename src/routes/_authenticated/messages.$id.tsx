@@ -227,6 +227,8 @@ function ThreadPage() {
   const [sending, setSending] = useState(false);
   const [typing, setTyping] = useState(false);
   const [online, setOnline] = useState(false);
+  const [replyTo, setReplyTo] = useState<Msg | null>(null);
+  const [picker, setPicker] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -270,6 +272,22 @@ function ThreadPage() {
     },
   });
 
+  const messageIds = messages.map((m) => m.id);
+  const { data: reactions = [] } = useQuery({
+    queryKey: ["message-reactions", id, messageIds.length],
+    enabled: messageIds.length > 0,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("message_reactions")
+        .select("id,message_id,user_id,emoji")
+        .in("message_id", messageIds);
+      if (error) throw error;
+      return (data ?? []) as Reaction[];
+    },
+  });
+  const byId = new Map(messages.map((m) => [m.id, m]));
+  const nameOf = (m?: Msg) => (!m ? "" : m.sender_id === user?.id ? "You" : other?.name ?? "Them");
+
   // Realtime: new messages, read receipts, typing, presence
   useEffect(() => {
     if (!user?.id) return;
@@ -297,6 +315,9 @@ function ThreadPage() {
         setTyping(true);
         if (typingTimer.current) clearTimeout(typingTimer.current);
         typingTimer.current = setTimeout(() => setTyping(false), 3000);
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "message_reactions" }, () => {
+        qc.invalidateQueries({ queryKey: ["message-reactions", id] });
       })
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
@@ -338,6 +359,18 @@ function ThreadPage() {
     setFile(f);
   }
 
+  async function react(messageId: string, emoji: string) {
+    if (!user) return;
+    const current = reactions.find((r) => r.message_id === messageId && r.user_id === user.id);
+    const { error } = current?.emoji === emoji
+      ? await supabase.from("message_reactions").delete().eq("id", current.id)
+      : current
+        ? await supabase.from("message_reactions").update({ emoji }).eq("id", current.id)
+        : await supabase.from("message_reactions").insert({ message_id: messageId, user_id: user.id, emoji });
+    if (error) toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["message-reactions", id] });
+  }
+
   async function send() {
     if (!user) return;
     const text = body.trim();
@@ -356,13 +389,14 @@ function ThreadPage() {
       }
       const { data, error } = await supabase
         .from("messages")
-        .insert({ conversation_id: id, sender_id: user.id, body: text, ...att })
+        .insert({ conversation_id: id, sender_id: user.id, body: text, reply_to_id: replyTo?.id ?? null, ...att })
         .select(COLS)
         .single();
       if (error) throw error;
       qc.setQueryData<Msg[]>(key, (old = []) => (old.some((x) => x.id === data.id) ? old : [...old, data as Msg]));
       setBody("");
       setFile(null);
+      setReplyTo(null);
       await supabase.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", id);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Could not send");
@@ -418,21 +452,19 @@ function ThreadPage() {
                       {new Date(m.created_at).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
                     </p>
                   )}
-                  <article
-                    className={cn(
-                      "max-w-[80%] space-y-1.5 rounded-2xl px-3.5 py-2.5 text-sm shadow-card",
-                      mine
-                        ? "ml-auto rounded-br-md bg-secondary text-secondary-foreground"
-                        : "rounded-bl-md border border-border bg-card text-card-foreground",
-                    )}
-                  >
-                    <Attachment m={m} mine={mine} />
-                    {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
-                    <p className={cn("flex items-center justify-end gap-1 text-[10px]", mine ? "opacity-75" : "text-muted-foreground")}>
-                      {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                      {mine && (m.read_at ? <Checks size={12} weight="bold" aria-label="Seen" /> : <Check size={12} aria-label="Sent" />)}
-                    </p>
-                  </article>
+                  <Bubble
+                    m={m}
+                    mine={mine}
+                    myId={user?.id}
+                    original={m.reply_to_id ? byId.get(m.reply_to_id) : undefined}
+                    originalName={nameOf(m.reply_to_id ? byId.get(m.reply_to_id) : undefined)}
+                    reactions={reactions.filter((r) => r.message_id === m.id)}
+                    active={picker === m.id}
+                    onToggle={(open) => setPicker(open ? m.id : null)}
+                    onReply={() => setReplyTo(m)}
+                    onReact={(emoji) => react(m.id, emoji)}
+                    onJump={(target) => document.getElementById(`msg-${target}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                  />
                 </div>
               );
             })
