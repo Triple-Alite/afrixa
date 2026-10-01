@@ -478,6 +478,18 @@ function ThreadPage() {
         </section>
 
         <section className="sticky bottom-20 space-y-2 border-t border-border bg-background px-4 pb-3 pt-2">
+          {replyTo && (
+            <div className="flex items-center gap-2 rounded-xl border-l-4 border-secondary bg-card p-2 text-xs">
+              <ArrowBendUpLeft size={16} className="shrink-0 text-secondary" />
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold">Replying to {nameOf(replyTo)}</span>
+                <span className="block truncate text-muted-foreground">{snippet(replyTo)}</span>
+              </span>
+              <button onClick={() => setReplyTo(null)} aria-label="Cancel reply">
+                <X size={16} />
+              </button>
+            </div>
+          )}
           {file && (
             <div className="flex items-center gap-2 rounded-xl border border-border bg-card p-2 text-xs">
               {file.type.startsWith("image/") ? <ImageIcon size={18} /> : <FileText size={18} />}
