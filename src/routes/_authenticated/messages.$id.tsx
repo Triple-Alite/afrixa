@@ -38,7 +38,7 @@ function Bubble({
   m, mine, original, originalName, reactions, myId, active,
   onReply, onToggle, onReact, onJump,
 }: {
-  m: Msg; mine: boolean; original?: Msg; originalName: string; reactions: Reaction[]; myId?: string; active: boolean;
+  m: Msg; mine: boolean; original: Msg | undefined; originalName: string; reactions: Reaction[]; myId: string | undefined; active: boolean;
   onReply: () => void; onToggle: (open: boolean) => void; onReact: (emoji: string) => void; onJump: (id: string) => void;
 }) {
   const [dx, setDx] = useState(0);
