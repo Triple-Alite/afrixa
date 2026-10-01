@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { PaperPlaneRight, Paperclip, Image as ImageIcon, FileText, X, Checks, Check, DownloadSimple } from "@phosphor-icons/react";
+import { PaperPlaneRight, Paperclip, Image as ImageIcon, FileText, X, Checks, Check, DownloadSimple, ArrowBendUpLeft } from "@phosphor-icons/react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
@@ -20,9 +20,140 @@ type Msg = {
   attachment_name: string | null;
   attachment_type: string | null;
   attachment_size: number | null;
+  reply_to_id: string | null;
 };
 
+type Reaction = { id: string; message_id: string; user_id: string; emoji: string };
+
 const MAX = 20 * 1024 * 1024;
+const COLS = "id,body,sender_id,created_at,read_at,attachment_path,attachment_name,attachment_type,attachment_size,reply_to_id";
+const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+
+function snippet(m: Msg | undefined) {
+  if (!m) return "Original message";
+  return m.body || (m.attachment_name ? `📎 ${m.attachment_name}` : "Attachment");
+}
+
+function Bubble({
+  m, mine, original, originalName, reactions, myId, active,
+  onReply, onToggle, onReact, onJump,
+}: {
+  m: Msg; mine: boolean; original?: Msg; originalName: string; reactions: Reaction[]; myId?: string; active: boolean;
+  onReply: () => void; onToggle: (open: boolean) => void; onReact: (emoji: string) => void; onJump: (id: string) => void;
+}) {
+  const [dx, setDx] = useState(0);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const press = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swiping = useRef(false);
+
+  const clearPress = () => { if (press.current) clearTimeout(press.current); press.current = null; };
+
+  const counts = reactions.reduce<Record<string, number>>((acc, r) => ({ ...acc, [r.emoji]: (acc[r.emoji] ?? 0) + 1 }), {});
+  const mineReaction = reactions.find((r) => r.user_id === myId)?.emoji;
+
+  return (
+    <div id={`msg-${m.id}`} className={cn("relative flex flex-col", mine ? "items-end" : "items-start")}>
+      <span
+        className="pointer-events-none absolute top-1/2 -translate-y-1/2 text-muted-foreground transition-opacity"
+        style={{ left: mine ? undefined : 4, right: mine ? 4 : undefined, opacity: Math.min(Math.abs(dx) / 60, 1) }}
+      >
+        <ArrowBendUpLeft size={18} />
+      </span>
+      <article
+        onPointerDown={(e) => {
+          start.current = { x: e.clientX, y: e.clientY };
+          swiping.current = false;
+          press.current = setTimeout(() => onToggle(true), 450);
+        }}
+        onPointerMove={(e) => {
+          if (!start.current) return;
+          const x = e.clientX - start.current.x;
+          const y = e.clientY - start.current.y;
+          if (Math.abs(x) > 8 || Math.abs(y) > 8) clearPress();
+          if (Math.abs(y) > Math.abs(x) && !swiping.current) return;
+          const dir = mine ? Math.min(0, x) : Math.max(0, x);
+          if (Math.abs(dir) > 10) swiping.current = true;
+          setDx(Math.max(-90, Math.min(90, dir)));
+        }}
+        onPointerUp={() => {
+          clearPress();
+          if (Math.abs(dx) > 55) onReply();
+          start.current = null;
+          setDx(0);
+        }}
+        onPointerCancel={() => { clearPress(); start.current = null; setDx(0); }}
+        onDoubleClick={() => onToggle(!active)}
+        onContextMenu={(e) => { e.preventDefault(); onToggle(true); }}
+        style={{ transform: `translateX(${dx}px)`, transition: dx === 0 ? "transform 0.2s" : "none", touchAction: "pan-y" }}
+        className={cn(
+          "max-w-[80%] select-none space-y-1.5 rounded-2xl px-3.5 py-2.5 text-sm shadow-card",
+          mine
+            ? "rounded-br-md bg-secondary text-secondary-foreground"
+            : "rounded-bl-md border border-border bg-card text-card-foreground",
+        )}
+      >
+        {m.reply_to_id && (
+          <button
+            type="button"
+            onClick={() => onJump(m.reply_to_id!)}
+            className={cn(
+              "block w-full rounded-lg border-l-4 px-2.5 py-1.5 text-left text-xs",
+              mine ? "border-primary-foreground/60 bg-primary-foreground/10" : "border-secondary bg-muted",
+            )}
+          >
+            <span className="block font-semibold">{originalName}</span>
+            <span className="line-clamp-2 opacity-80">{snippet(original)}</span>
+          </button>
+        )}
+        <Attachment m={m} mine={mine} />
+        {m.body && <p className="whitespace-pre-wrap break-words">{m.body}</p>}
+        <p className={cn("flex items-center justify-end gap-1 text-[10px]", mine ? "opacity-75" : "text-muted-foreground")}>
+          {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+          {mine && (m.read_at ? <Checks size={12} weight="bold" aria-label="Seen" /> : <Check size={12} aria-label="Sent" />)}
+        </p>
+      </article>
+      {Object.keys(counts).length > 0 && (
+        <div className="-mt-2 flex gap-1 px-2">
+          {Object.entries(counts).map(([emoji, n]) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => onReact(emoji)}
+              className={cn(
+                "rounded-full border bg-card px-1.5 py-0.5 text-xs shadow-card",
+                mineReaction === emoji ? "border-secondary" : "border-border",
+              )}
+            >
+              {emoji}{n > 1 ? ` ${n}` : ""}
+            </button>
+          ))}
+        </div>
+      )}
+      {active && (
+        <div className="z-10 mt-1 flex items-center gap-1 rounded-full border border-border bg-card p-1 shadow-card">
+          {EMOJIS.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              aria-label={`React ${emoji}`}
+              onClick={() => { onReact(emoji); onToggle(false); }}
+              className={cn("rounded-full px-1.5 py-1 text-lg hover:bg-muted", mineReaction === emoji && "bg-muted")}
+            >
+              {emoji}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => { onReply(); onToggle(false); }}
+            className="flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold hover:bg-muted"
+          >
+            <ArrowBendUpLeft size={14} /> Reply
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/messages/$id")({
   head: () => ({
