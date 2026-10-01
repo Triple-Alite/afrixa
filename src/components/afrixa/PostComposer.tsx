@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ImageSquare, PaperPlaneTilt, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
@@ -17,6 +17,8 @@ export function PostComposer() {
   const { user, profile } = useAuth();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState("");
@@ -25,6 +27,19 @@ export function PostComposer() {
   const [linkUrl, setLinkUrl] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  // The bottom-bar "Post" button (visible on the Network page) opens the composer.
+  useEffect(() => {
+    function openComposer() {
+      setOpen(true);
+      requestAnimationFrame(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        bodyRef.current?.focus();
+      });
+    }
+    window.addEventListener("afrixa:open-composer", openComposer);
+    return () => window.removeEventListener("afrixa:open-composer", openComposer);
+  }, []);
 
   const publish = useMutation({
     mutationFn: async () => {
