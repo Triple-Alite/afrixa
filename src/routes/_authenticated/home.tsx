@@ -91,7 +91,7 @@ const PROMOTIONS = [
     to: "/feed" as const,
     image: networkBanner,
   },
-];
+] as const;
 
 function greeting() {
   const hour = new Date().getHours();
@@ -134,7 +134,8 @@ function HomePage() {
   const featured = opportunities.filter((item) => item.status === "open").slice(0, 5);
   const firstName = profile?.full_name?.trim().split(/\s+/)[0] ?? "there";
   const quickLinks = isClient ? CLIENT_LINKS : TALENT_LINKS;
-  const activePromotion = PROMOTIONS[promotion] ?? PROMOTIONS[0];
+  const activePromotion = PROMOTIONS[promotion];
+  if (!activePromotion) return null;
 
   return (
     <AppShell className="bg-card">
