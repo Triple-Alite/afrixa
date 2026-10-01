@@ -51,6 +51,15 @@ function NetworkFeedPage() {
   const [term, setTerm] = useState("");
   const queryClient = useQueryClient();
 
+  // The bottom-bar "Post" button switches back to the feed tab where the composer lives.
+  useEffect(() => {
+    function openComposer() {
+      setTab("feed");
+    }
+    window.addEventListener("afrixa:open-composer", openComposer);
+    return () => window.removeEventListener("afrixa:open-composer", openComposer);
+  }, []);
+
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["feed", user?.id],
     queryFn: () => fetchFeed(user?.id),
