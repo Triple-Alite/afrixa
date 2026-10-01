@@ -131,7 +131,7 @@ function ThreadPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("messages")
-        .select("id,body,sender_id,created_at,read_at,attachment_path,attachment_name,attachment_type,attachment_size")
+        .select(COLS)
         .eq("conversation_id", id)
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -226,7 +226,7 @@ function ThreadPage() {
       const { data, error } = await supabase
         .from("messages")
         .insert({ conversation_id: id, sender_id: user.id, body: text, ...att })
-        .select("id,body,sender_id,created_at,read_at,attachment_path,attachment_name,attachment_type,attachment_size")
+        .select(COLS)
         .single();
       if (error) throw error;
       qc.setQueryData<Msg[]>(key, (old = []) => (old.some((x) => x.id === data.id) ? old : [...old, data as Msg]));
