@@ -81,7 +81,7 @@ export function PostComposer() {
   }
 
   return (
-    <section className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+    <section ref={sectionRef} className="rounded-2xl border border-border bg-card p-3 shadow-sm">
       <div className="flex items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground">
           {profile?.avatar_url ? (
@@ -112,6 +112,7 @@ export function PostComposer() {
       {open ? (
         <div className="mt-3 space-y-3">
           <Textarea
+            ref={bodyRef}
             value={body}
             onChange={(event) => setBody(event.target.value)}
             placeholder="What are you working on?"
