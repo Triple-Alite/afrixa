@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ProfileDossierView } from "@/components/afrixa/ProfileDossier";
 import { fetchProfileDossier } from "@/lib/profile.data";
+import { fetchFeed } from "@/lib/social.data";
+import { PostCard } from "@/components/afrixa/PostCard";
 
 
 export const Route = createFileRoute("/_authenticated/talent/$id")({
@@ -102,6 +104,11 @@ function TalentProfilePage() {
       if (error) throw error;
       return data ?? [];
     },
+  });
+
+  const { data: posts = [] } = useQuery({
+    queryKey: ["feed", "author", id],
+    queryFn: () => fetchFeed(user?.id, id),
   });
 
   async function contact() {
@@ -218,6 +225,19 @@ function TalentProfilePage() {
             ) : (
               <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">
                 No portfolio work published yet.
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-base font-semibold">Activity</h2>
+          <div className="mt-3 space-y-3">
+            {posts.length ? (
+              posts.map((post) => <PostCard key={post.id} post={post} />)
+            ) : (
+              <p className="rounded-2xl border border-dashed border-border p-6 text-sm text-muted-foreground">
+                No posts yet.
               </p>
             )}
           </div>
