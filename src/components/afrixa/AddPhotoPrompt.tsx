@@ -20,8 +20,8 @@ export function AddPhotoPrompt() {
 
   async function onPick(file: File | undefined) {
     if (!file || !user) return;
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file");
-    if (file.size > MAX_BYTES) return toast.error("Photo must be under 5MB");
+    if (!file.type.startsWith("image/")) return void toast.error("Please choose an image file");
+    if (file.size > MAX_BYTES) return void toast.error("Photo must be under 5MB");
     setBusy(true);
     try {
       const url = await uploadUserFile("avatars", user.id, file);
