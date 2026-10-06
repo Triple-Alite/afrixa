@@ -1,0 +1,6 @@
+CREATE POLICY "Members view discoverable profiles" ON public.profiles FOR SELECT TO authenticated USING (discoverable = true);
+CREATE POLICY "Members view discoverable portfolio" ON public.portfolio_items FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = portfolio_items.user_id AND p.discoverable = true));
+CREATE POLICY "Members view discoverable skills" ON public.profile_skills FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = profile_skills.user_id AND p.discoverable = true));
+CREATE POLICY "Members view discoverable experience" ON public.work_experiences FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = work_experiences.user_id AND p.discoverable = true));
+CREATE POLICY "Members view discoverable education" ON public.education_entries FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = education_entries.user_id AND p.discoverable = true));
+CREATE POLICY "Members view discoverable certifications" ON public.certifications FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = certifications.user_id AND p.discoverable = true));

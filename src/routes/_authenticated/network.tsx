@@ -47,16 +47,23 @@ function PersonRow({
 }) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
-      <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+      <Link
+        to="/talent/$id"
+        params={{ id: person?.id ?? fallbackId }}
+        aria-label="View profile"
+        className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+      >
         {person?.avatar_url ? (
           <img src={person.avatar_url} alt="" className="size-full object-cover" />
         ) : (
           initials(person?.full_name ?? "A")
         )}
-      </span>
+      </Link>
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1 text-sm font-semibold">
-          <span className="truncate">{person?.full_name ?? "Afrixa member"}</span>
+          <Link to="/talent/$id" params={{ id: person?.id ?? fallbackId }} className="truncate hover:underline">
+            {person?.full_name ?? "Afrixa member"}
+          </Link>
           {person?.verified ? <SealCheck size={14} weight="fill" className="text-secondary" /> : null}
         </p>
         <p className="truncate text-xs text-muted-foreground">

@@ -104,16 +104,23 @@ export function PostCard({ post }: { post: FeedPost }) {
   return (
     <article className="rounded-2xl border border-border bg-card shadow-sm">
       <header className="flex items-start gap-3 p-4 pb-3">
-        <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+        <Link
+          to="/talent/$id"
+          params={{ id: post.author_id }}
+          aria-label="View profile"
+          className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+        >
           {author?.avatar_url ? (
             <img src={author.avatar_url} alt="" className="size-full object-cover" />
           ) : (
             initials(author?.full_name ?? "Afrixa member")
           )}
-        </span>
+        </Link>
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1 text-sm font-semibold">
-            <span className="truncate">{author?.full_name ?? "Afrixa member"}</span>
+            <Link to="/talent/$id" params={{ id: post.author_id }} className="truncate hover:underline">
+              {author?.full_name ?? "Afrixa member"}
+            </Link>
             {author?.verified ? <SealCheck size={14} className="text-secondary" weight="fill" /> : null}
           </p>
           <p className="truncate text-xs text-muted-foreground">
@@ -324,7 +331,9 @@ function CommentRow({ item, onReply }: { item: PostComment; onReply: () => void 
       <div className="min-w-0 flex-1">
         <div className="rounded-2xl bg-muted/60 px-3 py-2">
           <p className="text-xs font-semibold">
-            {item.author?.full_name ?? "Afrixa member"}
+            <Link to="/talent/$id" params={{ id: item.author_id }} className="hover:underline">
+              {item.author?.full_name ?? "Afrixa member"}
+            </Link>
             <span className="ml-1 font-normal text-muted-foreground">
               · {timeAgo(item.created_at)}
             </span>
