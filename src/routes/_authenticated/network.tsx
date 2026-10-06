@@ -12,6 +12,7 @@ import { fetchSkillsForPeople } from "@/lib/profile.data";
 import { OpportunityCard } from "@/components/afrixa/OpportunityCard";
 import { fetchOpenGigs, fetchTalentSignals, matchPercent, rankGigs } from "@/lib/recommend";
 import type { PostAuthor } from "@/lib/social";
+import { AiPeopleMatch } from "@/components/afrixa/AiPeopleMatch";
 
 export const Route = createFileRoute("/_authenticated/network")({
   head: () => ({
@@ -197,6 +198,8 @@ function NetworkPage() {
         {isLoading ? (
           <p className="py-10 text-center text-sm text-muted-foreground">Loading your network…</p>
         ) : null}
+
+        <AiPeopleMatch />
 
         {user?.id && profile?.role !== "client" ? <RecommendedGigs userId={user.id} /> : null}
 
