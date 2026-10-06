@@ -62,6 +62,8 @@ function ProfilePage() {
 
   async function onAvatarPicked(file: File | undefined) {
     if (!file || !user) return;
+    if (!file.type.startsWith("image/")) return void toast.error("Please choose an image file");
+    if (file.size > 5 * 1024 * 1024) return void toast.error("Photo must be under 5MB");
     setBusy(true);
     try {
       const url = await uploadUserFile("avatars", user.id, file);

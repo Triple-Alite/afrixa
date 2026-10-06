@@ -8,6 +8,7 @@ import { AppShell, ScreenHeader } from "@/components/afrixa/AppShell";
 import { NotificationBell } from "@/components/afrixa/NotificationBell";
 import { PostCard } from "@/components/afrixa/PostCard";
 import { PostComposer } from "@/components/afrixa/PostComposer";
+import { AddPhotoPrompt } from "@/components/afrixa/AddPhotoPrompt";
 import { PersonCard } from "@/components/afrixa/PersonCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -131,6 +132,7 @@ function NetworkFeedPage() {
       </div>
 
       <div className="space-y-3 px-4 pb-6">
+        <AddPhotoPrompt />
         {tab === "feed" ? (
           <>
             <PostComposer />
