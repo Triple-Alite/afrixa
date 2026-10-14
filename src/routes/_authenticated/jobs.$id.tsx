@@ -202,9 +202,19 @@ function JobDetailPage() {
 
       <div className="surface-hero px-4 pb-10 pt-2 text-primary-foreground">
         <h1 className="text-xl font-bold leading-snug">{job.title}</h1>
-        <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-white/70">
-          <Buildings size={15} /> {job.company}
-        </p>
+        {job.client_id ? (
+          <Link
+            to="/talent/$id"
+            params={{ id: job.client_id }}
+            className="mt-1 inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
+          >
+            <Buildings size={15} /> {job.company}
+          </Link>
+        ) : (
+          <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-white/70">
+            <Buildings size={15} /> {job.company}
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/80">
           <span className="inline-flex items-center gap-1">
             <MapPin size={14} /> {job.country ?? "Remote"}

@@ -122,38 +122,47 @@ function MessagesPage() {
           <p className="text-sm text-muted-foreground">Loading conversations…</p>
         ) : filtered.length ? (
           <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-card">
-            {filtered.map((r) => (
-              <Link
-                key={r.id}
-                to="/messages/$id"
-                params={{ id: r.id }}
-                className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/50"
-              >
-                {r.otherAvatar ? (
-                  <img src={r.otherAvatar} alt={r.otherName} className="size-12 shrink-0 rounded-full object-cover" />
-                ) : (
-                  <span className="surface-hero flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold text-primary-foreground">
-                    {initials(r.otherName)}
-                  </span>
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <h2 className={cn("truncate text-sm", r.unread ? "font-bold" : "font-semibold")}>{r.otherName}</h2>
-                    <span className="shrink-0 text-[11px] text-muted-foreground">{timeLabel(r.last_message_at)}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <p className={cn("truncate text-xs", r.unread ? "font-medium text-foreground" : "text-muted-foreground")}>
-                      {r.preview}
-                    </p>
-                    {r.unread > 0 && (
-                      <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-secondary px-1.5 text-[10px] font-bold text-secondary-foreground">
-                        {r.unread}
+              {filtered.map((r) => (
+                <div key={r.id} className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/50">
+                  <Link
+                    to="/talent/$id"
+                    params={{ id: r.otherId }}
+                    aria-label={`View ${r.otherName}'s profile`}
+                    className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {r.otherAvatar ? (
+                      <img src={r.otherAvatar} alt="" className="size-12 rounded-full object-cover" />
+                    ) : (
+                      <span className="surface-hero flex size-12 items-center justify-center rounded-full text-sm font-bold text-primary-foreground">
+                        {initials(r.otherName)}
                       </span>
                     )}
-                  </div>
+                  </Link>
+                  <Link
+                    to="/messages/$id"
+                    params={{ id: r.id }}
+                    aria-label={`Open conversation with ${r.otherName}`}
+                    className="min-w-0 flex-1"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <h2 className={cn("truncate text-sm hover:underline", r.unread ? "font-bold" : "font-semibold")}>
+                        {r.otherName}
+                      </h2>
+                      <span className="shrink-0 text-[11px] text-muted-foreground">{timeLabel(r.last_message_at)}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={cn("truncate text-xs", r.unread ? "font-medium text-foreground" : "text-muted-foreground")}>
+                        {r.preview}
+                      </p>
+                      {r.unread > 0 && (
+                        <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-secondary px-1.5 text-[10px] font-bold text-secondary-foreground">
+                          {r.unread}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
                 </div>
-              </Link>
-            ))}
+              ))}
           </div>
         ) : (
           <section className="rounded-2xl border border-dashed border-border p-8 text-center">

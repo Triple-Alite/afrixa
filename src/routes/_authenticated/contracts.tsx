@@ -193,7 +193,13 @@ function ContractsPage() {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {contract.role === "client" ? "Freelancer" : "Client"}:{" "}
-                    {contract.counterparty_name}
+                    <Link
+                      to="/talent/$id"
+                      params={{ id: contract.role === "client" ? contract.talent_id : contract.client_id }}
+                      className="font-medium text-foreground underline-offset-2 hover:underline"
+                    >
+                      {contract.counterparty_name}
+                    </Link>
                   </p>
                   <div className="pt-1">
                     <Progress value={progress} className="h-1.5" />

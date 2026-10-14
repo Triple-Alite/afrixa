@@ -60,7 +60,9 @@ export function PersonCard({ person }: { person: PersonSuggestion }) {
         </Link>
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1 text-sm font-semibold">
-            <span className="truncate">{person.full_name ?? "Afrixa member"}</span>
+            <Link to="/talent/$id" params={{ id: person.id }} className="truncate hover:underline">
+              {person.full_name ?? "Afrixa member"}
+            </Link>
             {person.verified ? <SealCheck size={14} weight="fill" className="text-secondary" /> : null}
           </p>
           <p className="truncate text-xs text-muted-foreground">

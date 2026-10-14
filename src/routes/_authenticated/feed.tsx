@@ -191,16 +191,27 @@ function NetworkFeedPage() {
                     key={row.id}
                     className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3"
                   >
-                    <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground">
+                    <Link
+                      to="/talent/$id"
+                      params={{ id: row.requester_id }}
+                      aria-label={`View ${row.person?.full_name ?? "member"}'s profile`}
+                      className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-sm font-semibold text-muted-foreground"
+                    >
                       {row.person?.avatar_url ? (
                         <img src={row.person.avatar_url} alt="" className="size-full object-cover" />
                       ) : (
                         initials(row.person?.full_name ?? "A")
                       )}
-                    </span>
+                    </Link>
                     <div className="min-w-0 flex-1">
                       <p className="flex items-center gap-1 text-sm font-semibold">
-                        <span className="truncate">{row.person?.full_name ?? "Afrixa member"}</span>
+                        <Link
+                          to="/talent/$id"
+                          params={{ id: row.requester_id }}
+                          className="truncate hover:underline"
+                        >
+                          {row.person?.full_name ?? "Afrixa member"}
+                        </Link>
                         {row.person?.verified ? (
                           <SealCheck size={14} weight="fill" className="text-secondary" />
                         ) : null}
@@ -243,9 +254,13 @@ function NetworkFeedPage() {
                     key={row.id}
                     className="flex items-center justify-between rounded-2xl border border-border bg-card p-3 text-sm"
                   >
-                    <span className="truncate font-medium">
+                    <Link
+                      to="/talent/$id"
+                      params={{ id: row.addressee_id }}
+                      className="truncate font-medium hover:underline"
+                    >
                       {row.person?.full_name ?? "Afrixa member"}
-                    </span>
+                    </Link>
                     <span className="text-xs text-muted-foreground">Pending</span>
                   </div>
                 ))
