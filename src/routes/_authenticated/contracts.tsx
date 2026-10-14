@@ -140,7 +140,13 @@ function ContractsPage() {
                 className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{proposal.talent_name}</p>
+                  <Link
+                    to="/talent/$id"
+                    params={{ id: proposal.talent_id }}
+                    className="block truncate text-sm font-semibold hover:underline"
+                  >
+                    {proposal.talent_name}
+                  </Link>
                   <p className="truncate text-xs text-muted-foreground">
                     {proposal.opportunity_title}
                   </p>

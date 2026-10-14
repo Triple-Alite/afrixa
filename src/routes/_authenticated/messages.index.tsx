@@ -138,19 +138,23 @@ function MessagesPage() {
                       </span>
                     )}
                   </Link>
-                  <Link
-                    to="/messages/$id"
-                    params={{ id: r.id }}
-                    aria-label={`Open conversation with ${r.otherName}`}
-                    className="min-w-0 flex-1"
-                  >
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-2">
-                      <h2 className={cn("truncate text-sm hover:underline", r.unread ? "font-bold" : "font-semibold")}>
+                      <Link
+                        to="/talent/$id"
+                        params={{ id: r.otherId }}
+                        className={cn("truncate text-sm hover:underline", r.unread ? "font-bold" : "font-semibold")}
+                      >
                         {r.otherName}
-                      </h2>
+                      </Link>
                       <span className="shrink-0 text-[11px] text-muted-foreground">{timeLabel(r.last_message_at)}</span>
                     </div>
-                    <div className="flex items-center justify-between gap-2">
+                    <Link
+                      to="/messages/$id"
+                      params={{ id: r.id }}
+                      aria-label={`Open conversation with ${r.otherName}`}
+                      className="mt-1 flex items-center justify-between gap-2"
+                    >
                       <p className={cn("truncate text-xs", r.unread ? "font-medium text-foreground" : "text-muted-foreground")}>
                         {r.preview}
                       </p>
@@ -159,8 +163,8 @@ function MessagesPage() {
                           {r.unread}
                         </span>
                       )}
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
                 </div>
               ))}
           </div>
