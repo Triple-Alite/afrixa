@@ -140,7 +140,13 @@ function ContractsPage() {
                 className="flex items-center justify-between gap-3 rounded-xl border border-border p-3"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{proposal.talent_name}</p>
+                  <Link
+                    to="/talent/$id"
+                    params={{ id: proposal.talent_id }}
+                    className="block truncate text-sm font-semibold hover:underline"
+                  >
+                    {proposal.talent_name}
+                  </Link>
                   <p className="truncate text-xs text-muted-foreground">
                     {proposal.opportunity_title}
                   </p>
@@ -193,7 +199,13 @@ function ContractsPage() {
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {contract.role === "client" ? "Freelancer" : "Client"}:{" "}
-                    {contract.counterparty_name}
+                    <Link
+                      to="/talent/$id"
+                      params={{ id: contract.role === "client" ? contract.talent_id : contract.client_id }}
+                      className="font-medium text-foreground underline-offset-2 hover:underline"
+                    >
+                      {contract.counterparty_name}
+                    </Link>
                   </p>
                   <div className="pt-1">
                     <Progress value={progress} className="h-1.5" />

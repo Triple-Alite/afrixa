@@ -30,21 +30,29 @@ export function SkillChip({ children }: { children: ReactNode }) {
 export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
   const left = timeLeft(opportunity.deadline);
   return (
-    <Link
-      to="/jobs/$id"
-      params={{ id: opportunity.id }}
-      className="block rounded-2xl border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-lift"
-    >
+    <article className="rounded-2xl border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-lift">
       <div className="flex items-start gap-3">
         <span className="surface-hero flex size-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-primary-foreground">
           {initials(opportunity.company)}
         </span>
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold leading-snug text-foreground">
-            {opportunity.title}
+            <Link to="/jobs/$id" params={{ id: opportunity.id }} className="hover:underline">
+              {opportunity.title}
+            </Link>
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {opportunity.company}
+            {opportunity.client_id ? (
+              <Link
+                to="/talent/$id"
+                params={{ id: opportunity.client_id }}
+                className="font-medium hover:text-primary hover:underline"
+              >
+                {opportunity.company}
+              </Link>
+            ) : (
+              opportunity.company
+            )}
             {opportunity.work_mode ? ` • ${opportunity.work_mode}` : ""}
             {opportunity.job_type ? ` • ${opportunity.job_type}` : ""}
           </p>
@@ -71,7 +79,7 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
           </span>
         ) : null}
       </div>
-    </Link>
+    </article>
   );
 }
 
@@ -102,11 +110,7 @@ export function GigStatusBar({ status }: { status: string | null | undefined }) 
 
 export function GigCard({ opportunity }: { opportunity: Opportunity }) {
   return (
-    <Link
-      to="/jobs/$id"
-      params={{ id: opportunity.id }}
-      className="block overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-shadow hover:shadow-lift"
-    >
+    <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-shadow hover:shadow-lift">
       <div className="surface-hero flex h-24 items-end p-3">
         <span className="rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-foreground">
           {opportunity.category}
@@ -114,9 +118,23 @@ export function GigCard({ opportunity }: { opportunity: Opportunity }) {
       </div>
       <div className="p-3">
         <h3 className="line-clamp-2 text-sm font-semibold leading-snug">
-          {opportunity.title}
+          <Link to="/jobs/$id" params={{ id: opportunity.id }} className="hover:underline">
+            {opportunity.title}
+          </Link>
         </h3>
-        <p className="mt-1 text-xs text-muted-foreground">{opportunity.company}</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {opportunity.client_id ? (
+            <Link
+              to="/talent/$id"
+              params={{ id: opportunity.client_id }}
+              className="font-medium hover:text-primary hover:underline"
+            >
+              {opportunity.company}
+            </Link>
+          ) : (
+            opportunity.company
+          )}
+        </p>
         <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <Star size={13} weight="fill" className="text-gold" />
@@ -128,6 +146,6 @@ export function GigCard({ opportunity }: { opportunity: Opportunity }) {
         <p className="mt-2 text-sm font-semibold">{budgetLabel(opportunity)}</p>
         <GigStatusBar status={opportunity.status} />
       </div>
-    </Link>
+    </article>
   );
 }

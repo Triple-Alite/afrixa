@@ -148,10 +148,15 @@ export function PostCard({ post }: { post: FeedPost }) {
           <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15">
             <Briefcase size={22} weight="fill" />
           </span>
-          <span>
+          <Link
+            to="/talent/$id"
+            params={{ id: post.author_id }}
+            className="flex items-center gap-3"
+            aria-label={`View ${author?.full_name ?? "member"}'s profile`}
+          >
             <span className="block text-xs uppercase tracking-wide opacity-80">New position</span>
             <span className="block text-sm font-semibold">Congratulate {author?.full_name?.split(" ")[0] ?? "them"} 🎉</span>
-          </span>
+          </Link>
         </div>
       ) : null}
 
@@ -321,13 +326,18 @@ export function PostCard({ post }: { post: FeedPost }) {
 function CommentRow({ item, onReply }: { item: PostComment; onReply: () => void }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-[11px] font-semibold text-muted-foreground">
+      <Link
+        to="/talent/$id"
+        params={{ id: item.author_id }}
+        aria-label={`View ${item.author?.full_name ?? "member"}'s profile`}
+        className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-[11px] font-semibold text-muted-foreground"
+      >
         {item.author?.avatar_url ? (
           <img src={item.author.avatar_url} alt="" className="size-full object-cover" />
         ) : (
           initials(item.author?.full_name ?? "A")
         )}
-      </span>
+      </Link>
       <div className="min-w-0 flex-1">
         <div className="rounded-2xl bg-muted/60 px-3 py-2">
           <p className="text-xs font-semibold">
